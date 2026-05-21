@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
-  <title>히포케이메논 인사 ERP V.1.7.6</title>
+  <title>히포케이메논 인사 ERP V.1.7.8</title>
   <link rel="icon" href="data:,">
   <style>
     :root{
@@ -107,7 +107,7 @@ body{font-size:11px !important;}
   <div id="loginPage" class="login-wrap">
     <div class="login-card">
       <h1>히포케이메논 인사 ERP</h1>
-      <div class="sub">V.1.7.6 · IndexedDB 테스트 저장모드</div>
+      <div class="sub">V.1.7.8 · IndexedDB 테스트 저장모드</div>
       <div class="field"><label for="loginId">ID</label><input id="loginId" value="admin" autocomplete="username"></div>
       <div class="field"><label for="loginPw">Password</label><input id="loginPw" type="password" value="admin" autocomplete="current-password"></div>
       <button class="btn primary" style="width:100%" onclick="login()">로그인</button>
@@ -118,7 +118,7 @@ body{font-size:11px !important;}
 
   <div id="app" class="app hidden">
     <aside id="sidebar" class="sidebar">
-      <div class="brand"><div class="brand-mark">H</div><div class="brand-text"><strong>HR ERP</strong><span>V.1.7.6</span></div><button class="toggle" onclick="toggleSidebar()">☰</button></div>
+      <div class="brand"><div class="brand-mark">H</div><div class="brand-text"><strong>HR ERP</strong><span>V.1.7.8</span></div><button class="toggle" onclick="toggleSidebar()">☰</button></div>
       <nav id="menu" class="menu"></nav>
     </aside>
     <main class="main">
@@ -139,7 +139,7 @@ body{font-size:11px !important;}
   <div id="toast" class="toast"></div>
 
 <script>
-const VERSION = 'V.1.7.6';
+const VERSION = 'V.1.7.8';
 const defaultSites = [
   {name:'하이웍스', url:'#'}, {name:'HR시프트', url:'#'}, {name:'나인하이어', url:'#'}, {name:'에스원', url:'#'}
 ];
@@ -4252,7 +4252,7 @@ function handleHrSalaryBulkUpload(event){
       saveApiTaxModel(model);
       return getTaxSourceV149();
     }catch(err){
-      console.warn('[V.1.7.6] 국가법령정보 API 동기화 실패:',err);
+      console.warn('[V.1.7.8] 국가법령정보 API 동기화 실패:',err);
       if(!loadApiTaxModel()) localStorage.setItem(API_TAX_STATUS_KEY,'fallback');
       updateTaxSyncStatusV149();
       return getTaxSourceV149();
@@ -4349,24 +4349,25 @@ function handleHrSalaryBulkUpload(event){
   function isRetireeTaxZeroMonthV140(e,r){ const targetYm=String(r?.ym||ymInput()||''); const retireYm=String(e?.resignDate||e?.retireDate||e?.quitDate||e?.['퇴직일']||e?.['퇴사일']||'').slice(0,7); return !!(e&&targetYm&&retireYm===targetYm&&REG_TYPES.includes(String(e.type||''))); }
   function applyTax(r,e){ const tx=taxableAmount(r); r.taxable=tx; r.employmentInsurance=calcEmployment(tx); if(isRetireeTaxZeroMonthV140(e,r)){ r.incomeTax=0; r.localTax=0; r._retireeTaxZeroV140=true; return r; } r.incomeTax=calcIncomeTax(tx,e); r.localTax=calcLocalTax(r.incomeTax); return r; }
   function inputMoney(el){ el.value=money(num(el.value)); }
-  function readCurrentForm(){ const e=safeEmployees().find(x=>x.no===selectedNo); if(!e)return null; const r=ensurePayroll(e,ymInput()); [...payKeys(e),...dedKeys].forEach(k=>{ const el=$('payrollV094_'+k); if(el)r[k]=num(el.value); }); applyTax(r,e); return {e,r}; }
-  function recalcCurrent(){ const o=readCurrentForm(); if(!o)return; renderRight(o.e.no); }
+  function readCurrentForm(){ const e=safeEmployees().find(x=>x.no===selectedNo); if(!e)return null; const r=ensurePayroll(e,ymInput()); [...payKeys(e),...dedKeys].forEach(k=>{ const el=$('payrollV094_'+k); if(el)r[k]=num(el.value); }); return {e,r}; }
+  function recalcCurrent(){ const o=readCurrentForm(); if(!o)return; applyTax(o.r,o.e); renderRight(o.e.no); }
+  function recalcTotalsOnly(){ const o=readCurrentForm(); if(!o)return; renderRight(o.e.no); }
   function moveNextInput(e){ if(e.key!=='Enter')return; e.preventDefault(); const inputs=[...document.querySelectorAll('#payrollRightV094 input[data-pay-key]')]; const idx=inputs.indexOf(e.target); if(idx>=0&&idx<inputs.length-1)inputs[idx+1].focus(); else if(idx===inputs.length-1)selectNextEmployee(); }
   function selectNextEmployee(){ const rows=targetEmployees(ymInput()); const idx=rows.findIndex(e=>e.no===selectedNo); if(idx>=0&&idx<rows.length-1)selectEmp(rows[idx+1].no); }
   function payrollPage(){ setTimeout(()=>{window.payrollV101SyncYm(false);renderList(false); if(!guideShown){guideShown=true; showGuide();}},0); const curYm=ymInput(); const yy=curYm.slice(0,4); const mm=curYm.slice(5,7); return `<div class="payroll-v094-shell"><div class="payroll-v094-top"><div class="field"><label>귀속연도</label><input type="number" id="regularPayYearV101" min="2000" max="2100" value="${yy}" oninput="window.payrollV101SyncYm(true)" onkeydown="window.payrollV094HandleEnter(event)" style="width:96px"></div><div class="field"><label>귀속월</label><select id="regularPayMonthV101" onchange="window.payrollV101SyncYm(true)" onkeydown="window.payrollV094HandleEnter(event)">${Array.from({length:12},(_,i)=>String(i+1).padStart(2,'0')).map(m=>`<option value="${m}" ${m===mm?'selected':''}>${Number(m)}월</option>`).join('')}</select><input type="hidden" id="regularPayYmV094" value="${curYm}"></div><div class="field"><label>급여지급일</label><input id="regularPayDateV094" value="${defaultPayDate(curYm)}" oninput="window.payrollV094DateMask(this)" onkeydown="window.payrollV094HandleEnter(event)" placeholder="YYYY-MM-DD"></div><button class="btn primary" onclick="window.payrollV094RenderList(true)">조회</button><button id="payrollSaveAllBtnV094" class="btn success" onclick="window.payrollV094SaveAll()">전체 저장</button><span class="payroll-v136-toolbar-spacer"></span><button class="btn ghost" id="wehagoDownloadBtnV136" onclick="window.downloadWehagoPayrollV131()">위하고 급여 업로드 다운로드</button><button class="btn ghost" onclick="window.payrollV101ReloadSalaryInfo()">임금정보 불러오기</button><button class="btn ghost" onclick="window.recalcAllIncomeTaxV094()">전체 소득세 재계산</button><button class="btn ghost" onclick="window.payrollV094ShowGuide()">정산 전 확인사항</button><span data-tax-sync-status-v149 class="tax-sync-status-v149 fallback">🔴 세법 동기화 실패 (기본 요율 적용 중)</span></div><div class="payroll-v094-layout"><div class="payroll-v094-left"><div class="payroll-v094-head"><strong>사원 목록</strong><span id="payrollCountV094"></span></div><div class="payroll-v094-body"><input id="payrollSearchV094" placeholder="고용형태/사번/부서/이름 검색" oninput="window.payrollV094RenderList(false)" style="width:100%"></div><div class="payroll-v094-scroll"><table class="payroll-v094-table"><thead><tr><th>고용형태</th><th>사번</th><th>부서</th><th>이름</th></tr></thead><tbody id="payrollListV094"></tbody></table></div></div><div class="payroll-v094-right"><div class="payroll-v094-head"><strong>급여정산</strong><span id="payrollRightStateV094">귀속년월 기준 지급대상자</span></div><div id="payrollRightV094" class="payroll-v094-body"><div class="work-box">좌측 사원을 선택하면 급여정산 화면이 표시됩니다.</div></div></div></div></div>`; }
-  function syncYmV101(updateDate){ const y=String($('regularPayYearV101')?.value||new Date().getFullYear()).replace(/[^0-9]/g,'').slice(0,4)||String(new Date().getFullYear()); const m=String($('regularPayMonthV101')?.value||String(new Date().getMonth()+1).padStart(2,'0')).padStart(2,'0'); const hidden=$('regularPayYmV094'); if(hidden)hidden.value=`${y}-${m}`; if(updateDate&&$('regularPayDateV094'))$('regularPayDateV094').value=defaultPayDate(`${y}-${m}`); }
+  function syncYmV101(updateDate){ const y=String($('regularPayYearV101')?.value||new Date().getFullYear()).replace(/[^0-9]/g,'').slice(0,4)||String(new Date().getFullYear()); const m=String($('regularPayMonthV101')?.value||String(new Date().getMonth()+1).padStart(2,'0')).padStart(2,'0'); const hidden=$('regularPayYmV094'); if(hidden)hidden.value=`${y}-${m}`; if(updateDate&&$('regularPayDateV094'))$('regularPayDateV094').value=defaultPayDate(`${y}-${m}`); if(updateDate){ selectedNo=''; renderList(false); const area=$('payrollRightV094'); if(area)area.innerHTML='<div class="work-box">좌측 사원을 선택하면 급여정산 화면이 표시됩니다.</div>'; } }
   function reloadSalaryInfo(){ const ym=ymInput(); if(!ym){notify('귀속년월을 먼저 선택해주세요.');return;} const rows=targetEmployees(ym); rows.forEach(e=>{ const sal=currentSalaryAt(e,ym); const p=calcProration(e,ym,sal); const r=ensurePayroll(e,ym); ['base','meal','dutyPay','servicePay','drive','car','fixedOver','execBaseBonus','execPerfBonus','execLongTerm','ordinaryHourly'].forEach(k=>{ if(p[k]!=null) r[k]=p[k]; }); applyTax(r,e); }); saveEmp(); renderList(false); if(selectedNo)renderRight(selectedNo); notify(`${ym} 기준 임금정보를 다시 불러왔습니다.`); }
   function renderList(selectFirst){ const ym=ymInput(); const k=String($('payrollSearchV094')?.value||'').trim(); const rows=targetEmployees(ym).filter(e=>!k||[e.type,e.no,e.dept,e.name].join(' ').includes(k)); if($('payrollCountV094'))$('payrollCountV094').textContent=`${rows.length}명`; const body=$('payrollListV094'); if(body)body.innerHTML=rows.map(e=>`<tr onclick="window.payrollV094SelectEmp('${esc(e.no)}')" data-no="${esc(e.no)}"><td>${esc(e.type)}</td><td>${esc(e.no)}</td><td>${esc(e.dept||'')}</td><td>${esc(e.name||'')}</td></tr>`).join('')||`<tr><td colspan="4" style="text-align:center;color:var(--muted)">대상자가 없습니다.</td></tr>`; updateSaveBtn(); if(selectFirst&&rows[0])selectEmp(rows[0].no); }
   function updateSaveBtn(){ const b=$('payrollSaveAllBtnV094'); if(!b)return; if(isLocked()){b.textContent='전체 해제';b.className='btn danger';}else{b.textContent='전체 저장';b.className='btn success';} }
   function selectEmp(no){ selectedNo=no; document.querySelectorAll('#payrollListV094 tr').forEach(tr=>tr.classList.toggle('selected',tr.dataset.no===no)); renderRight(no); }
   function eventBadge(e,ym){ const inM=(e.hireDate||'').slice(0,7)===ym, outM=(e.resignDate||'').slice(0,7)===ym; if(inM&&outM)return `<span class="payroll-v094-hire">${ymdDot(e.hireDate)} 입사</span> / <span class="payroll-v094-leave">${ymdDot(e.resignDate)} 퇴사</span>`; if(inM)return `<span class="payroll-v094-hire">${ymdDot(e.hireDate)} 입사</span>`; if(outM)return `<span class="payroll-v094-leave">${ymdDot(e.resignDate)} 퇴사</span>`; return ''; }
-  function renderRight(no){ const e=safeEmployees().find(x=>x.no===no); const area=$('payrollRightV094'); if(!e||!area)return; const ym=ymInput(); const r=ensurePayroll(e,ym); applyTax(r,e); const g=gross(r,e), d=deduct(r), tx=taxableAmount(r); const locked=isLocked(ym); const dis=locked?'readonly':''; const event=eventBadge(e,ym); const probEnd=(e.probationEnd||'').slice(0,7)===ym?e.probationEnd:'-'; area.innerHTML=`<div class="payroll-v094-summary"><div class="payroll-v094-kpi"><div class="label">총 지급액</div><div class="num">${money(g)}</div></div><div class="payroll-v094-kpi"><div class="label">총 공제액</div><div class="num">${money(d)}</div></div><div class="payroll-v094-kpi"><div class="label">실 지급액</div><div class="num">${money(g-d)}</div></div><div class="payroll-v094-kpi"><div class="label">과세액</div><div class="num">${money(tx)}</div></div></div><div class="payroll-v094-info"><div class="payroll-v094-info-title">기본 정보 ${event?`<span>${event}</span>`:''}</div><div class="payroll-v094-info-grid">${readonly('고용형태',e.type)}${readonly('사번',e.no)}${readonly('부서',e.dept)}${readonly('이름',e.name)}${readonly('직위/직책',displayPos(e))}${readonly('입사일',e.hireDate||'-')}${readonly('퇴사일',e.resignDate||'-')}${readonly('수습기간 여부',probationApplicable(e,ym)?'해당':'해당사항 없음')}${readonly('수습종료일',probEnd)}</div></div><div class="payroll-v094-panels"><div class="payroll-v094-panel"><h3>지급항목</h3><table><thead><tr><th>급여항목</th><th>TX</th><th>금액</th></tr></thead><tbody>${payKeys(e).map(k=>payRow(k,r,dis)).join('')}<tr class="payroll-v094-total-row"><td colspan="2">과세</td><td>${money(tx)}</td></tr><tr class="payroll-v094-total-row"><td colspan="2">지급액 계</td><td>${money(g)}</td></tr></tbody></table></div><div class="payroll-v094-panel"><h3>공제항목</h3><table><thead><tr><th>공제항목</th><th>금액</th></tr></thead><tbody>${dedKeys.map(k=>dedRow(k,r,dis)).join('')}<tr class="payroll-v094-total-row"><td>공제액 계</td><td>${money(d)}</td></tr><tr class="payroll-v094-total-row"><td>차인지급액</td><td>${money(g-d)}</td></tr></tbody></table></div><div class="payroll-v094-panel"><h3>귀속년월 전체 합산</h3>${totalPanelHtml()}</div></div><div class="toolbar"><button class="btn primary" onclick="window.payrollV094SaveCurrent()" ${locked?'disabled':''}>해당 사원 저장</button></div>`; area.querySelectorAll('input[data-pay-key]').forEach(el=>el.addEventListener('keydown',moveNextInput)); }
+  function renderRight(no){ const e=safeEmployees().find(x=>x.no===no); const area=$('payrollRightV094'); if(!e||!area)return; const ym=ymInput(); const r=ensurePayroll(e,ym); const g=gross(r,e), d=deduct(r), tx=taxableAmount(r); const locked=isLocked(ym); const dis=locked?'readonly':''; const event=eventBadge(e,ym); const probEnd=(e.probationEnd||'').slice(0,7)===ym?e.probationEnd:'-'; area.innerHTML=`<div class="payroll-v094-summary"><div class="payroll-v094-kpi"><div class="label">총 지급액</div><div class="num">${money(g)}</div></div><div class="payroll-v094-kpi"><div class="label">총 공제액</div><div class="num">${money(d)}</div></div><div class="payroll-v094-kpi"><div class="label">실 지급액</div><div class="num">${money(g-d)}</div></div><div class="payroll-v094-kpi"><div class="label">과세액</div><div class="num">${money(tx)}</div></div></div><div class="payroll-v094-info"><div class="payroll-v094-info-title">기본 정보 ${event?`<span>${event}</span>`:''}</div><div class="payroll-v094-info-grid">${readonly('고용형태',e.type)}${readonly('사번',e.no)}${readonly('부서',e.dept)}${readonly('이름',e.name)}${readonly('직위/직책',displayPos(e))}${readonly('입사일',e.hireDate||'-')}${readonly('퇴사일',e.resignDate||'-')}${readonly('수습기간 여부',probationApplicable(e,ym)?'해당':'해당사항 없음')}${readonly('수습종료일',probEnd)}</div></div><div class="payroll-v094-panels"><div class="payroll-v094-panel"><h3>지급항목</h3><table><thead><tr><th>급여항목</th><th>TX</th><th>금액</th></tr></thead><tbody>${payKeys(e).map(k=>payRow(k,r,dis)).join('')}<tr class="payroll-v094-total-row"><td colspan="2">과세</td><td>${money(tx)}</td></tr><tr class="payroll-v094-total-row"><td colspan="2">지급액 계</td><td>${money(g)}</td></tr></tbody></table></div><div class="payroll-v094-panel"><h3>공제항목</h3><table><thead><tr><th>공제항목</th><th>금액</th></tr></thead><tbody>${dedKeys.map(k=>dedRow(k,r,dis)).join('')}<tr class="payroll-v094-total-row"><td>공제액 계</td><td>${money(d)}</td></tr><tr class="payroll-v094-total-row"><td>차인지급액</td><td>${money(g-d)}</td></tr></tbody></table></div><div class="payroll-v094-panel"><h3>귀속년월 전체 합산</h3>${totalPanelHtml()}</div></div><div class="toolbar"><button class="btn primary" onclick="window.payrollV094SaveCurrent()" ${locked?'disabled':''}>해당 사원 저장</button></div>`; area.querySelectorAll('input[data-pay-key]').forEach(el=>el.addEventListener('keydown',moveNextInput)); }
   function readonly(label,value){ return `<div class="payroll-v094-readonly"><label>${esc(label)}</label><input readonly value="${esc(value)}"></div>`;}
   function payRow(k,r,dis){ const tx=['meal','drive'].includes(k)?'비과세':'과세'; return `<tr><td>${payLabels[k]}</td><td>${tx}</td><td><input ${dis} data-pay-key="${k}" id="payrollV094_${k}" value="${money(r[k]||0)}" oninput="window.payrollV094InputMoney(this);window.payrollV094RecalcCurrent()"></td></tr>`; }
-  function dedRow(k,r,dis){ const ro=['incomeTax','localTax','employmentInsurance'].includes(k)?'readonly':dis; return `<tr><td>${dedLabels[k]}</td><td><input ${ro} data-pay-key="${k}" id="payrollV094_${k}" value="${money(r[k]||0)}" oninput="window.payrollV094InputMoney(this);window.payrollV094RecalcCurrent()"></td></tr>`; }
+  function dedRow(k,r,dis){ const ro=['incomeTax','localTax','employmentInsurance'].includes(k)?'readonly':dis; return `<tr><td>${dedLabels[k]}</td><td><input ${ro} data-pay-key="${k}" id="payrollV094_${k}" value="${money(r[k]||0)}" oninput="window.payrollV094InputMoney(this);window.payrollV177RecalcTotalsOnly()"></td></tr>`; }
   function totalPanelHtml(){ const rows=targetEmployees(ymInput()).map(e=>ensurePayroll(e,ymInput())); const sum=k=>rows.reduce((s,r)=>s+num(r[k]),0); const g=targetEmployees(ymInput()).reduce((s,e)=>s+gross(ensurePayroll(e,ymInput()),e),0); const d=rows.reduce((s,r)=>s+deduct(r),0); return `<table><tbody><tr><td>과세</td><td>${money(rows.reduce((s,r)=>s+taxableAmount(r),0))}</td></tr><tr><td>제출 비과세</td><td>${money(sum('meal')+sum('drive'))}</td></tr><tr><td>감면소득</td><td>${money(0)}</td></tr><tr class="payroll-v094-total-row"><td>지급액 계</td><td>${money(g)}</td></tr><tr class="payroll-v094-total-row"><td>공제액 계</td><td>${money(d)}</td></tr><tr class="payroll-v094-total-row"><td>차인지급액</td><td>${money(g-d)}</td></tr></tbody></table>`; }
   function saveCurrent(){ const o=readCurrentForm(); if(!o)return notify('저장할 사원을 선택해주세요.'); saveEmp(); notify('해당 사원 급여정산이 저장되었습니다.'); renderRight(o.e.no); }
-  function saveAll(){ const ym=ymInput(); if(isLocked(ym)){ setLocked(ym,false); updateSaveBtn(); notify(`${ym} 급여정산 전체 해제되었습니다.`); renderRight(selectedNo); return; } targetEmployees(ym).forEach(e=>applyTax(ensurePayroll(e,ym),e)); saveEmp(); setLocked(ym,true); updateSaveBtn(); notify(`${ym} 급여정산 전체 저장되었습니다.`); renderRight(selectedNo); }
+  function saveAll(){ const ym=ymInput(); if(isLocked(ym)){ setLocked(ym,false); updateSaveBtn(); notify(`${ym} 급여정산 전체 해제되었습니다.`); renderRight(selectedNo); return; } saveEmp(); setLocked(ym,true); updateSaveBtn(); notify(`${ym} 급여정산 전체 저장되었습니다.`); renderRight(selectedNo); }
   function showGuide(){ const backdrop=document.createElement('div'); backdrop.className='modal-backdrop'; backdrop.style.display='flex'; backdrop.id='payrollGuideV094'; const currentYm=ymInput(); backdrop.innerHTML=`<div class="modal" style="width:min(860px,92vw)"><div class="modal-head"><h2>급여정산 전 확인사항</h2><button class="close" onclick="document.getElementById('payrollGuideV094').remove()">×</button></div><div class="modal-body"><div class="form-section"><h3>1. 근로소득 간이세액표 업로드 <span class="muted">최근 업로드일: ${taxUploadedAt()}</span></h3><ol class="payroll-v094-popup-list"><li>국세청 홈택스 접속</li><li>세금신고 &gt; 원천세 신고 &gt; 근로소득 간이세액표 접속</li><li>엑셀 다운로드 후 아래 업로드</li></ol><div class="payroll-v094-upload-row"><input type="file" id="taxTableUploadV094" accept=".xlsx,.xls,.csv,.pdf,.hwp"><button class="btn primary compact" onclick="window.payrollV094UploadTax()">간이세액표 업로드</button></div><div id="taxUploadResultV094" class="payroll-v094-result"></div></div><div class="form-section"><h3>2. 건강보험, 국민연금 산출내역 자료 업로드</h3><ol class="payroll-v094-popup-list"><li>사회보험징수포털 접속</li><li>공인인증서 로그인</li><li>보험료 산출내역 조회</li><li>고지년도 선택 후 검색</li><li>개인별 산출내역 Excel/CSV 다운로드 후 업로드</li></ol><div class="footer-note">※ 사회보험징수포털 CSV는 7행을 헤더로 보고 업로드합니다.</div><div class="payroll-v094-upload-row" style="align-items:flex-end"><div class="field" style="margin:0;min-width:150px"><label>국민연금 귀속년월</label><input type="month" id="pensionYmV094" value="${currentYm}"></div><input type="file" id="pensionUploadV094" accept=".csv,.xlsx,.xls"><button class="btn ghost compact" onclick="window.payrollV094UploadPension()">국민연금 산출내역 업로드</button></div><div id="pensionUploadResultV094" class="payroll-v094-result"></div><div class="payroll-v094-upload-row" style="align-items:flex-end"><div class="field" style="margin:0;min-width:150px"><label>건강보험 귀속년월</label><input type="month" id="healthYmV094" value="${currentYm}"></div><input type="file" id="healthUploadV094" accept=".csv,.xlsx,.xls"><button class="btn ghost compact" onclick="window.payrollV094UploadHealth()">건강보험 산출내역 업로드</button></div><div id="healthUploadResultV094" class="payroll-v094-result"></div><div class="footer-note">※ 산출내역은 선택한 귀속년월의 급여정산 데이터에만 반영됩니다. 현재 조회 중인 귀속년월과 다르게 선택할 수 있으므로 업로드 전 반드시 확인해주세요.</div></div><div class="toolbar" style="justify-content:flex-end"><button class="btn primary" onclick="document.getElementById('payrollGuideV094').remove()">확인</button></div></div></div>`; document.body.appendChild(backdrop); }
 
   function readFile(file, cb){ const r=new FileReader(); r.onload=e=>cb(e.target.result); r.readAsArrayBuffer(file); }
@@ -4401,7 +4402,7 @@ function handleHrSalaryBulkUpload(event){
   const prevPageBody=window.pageBody;
   window.pageBody=function(id,title){ if(id==='PAYROLL_CLOSE')return payrollPage(); if(id==='OVERTIME_PAY')return subPage('초과근로','overtime'); if(id==='INCENTIVE_PAY')return subPage('인센티브/기타수당','incentive'); if(id==='ANNUAL_PAY')return subPage('연차수당','annual'); return typeof prevPageBody==='function'?prevPageBody(id,title):''; };
   window.payrollPage=payrollPage; window.regularPayrollClosePageV094=payrollPage;
-  window.payrollV101SyncYm=syncYmV101; window.payrollV101ReloadSalaryInfo=reloadSalaryInfo; window.payrollV094RenderList=renderList; window.payrollV094SelectEmp=selectEmp; window.payrollV094DateMask=dateMask; window.payrollV094HandleEnter=handleTopEnter; window.payrollV094DefaultPayDate=defaultPayDate; window.payrollV094InputMoney=inputMoney; window.payrollV094RecalcCurrent=recalcCurrent; window.payrollV094SaveCurrent=saveCurrent; window.payrollV094SaveAll=saveAll; window.payrollV094ShowGuide=showGuide; window.payrollV094UploadTax=uploadTax; window.payrollV094UploadPension=uploadPension; window.payrollV094UploadHealth=uploadHealth; window.recalcAllIncomeTaxV094=recalcAllIncomeTax;
+  window.payrollV101SyncYm=syncYmV101; window.payrollV101ReloadSalaryInfo=reloadSalaryInfo; window.payrollV094RenderList=renderList; window.payrollV094SelectEmp=selectEmp; window.payrollV094DateMask=dateMask; window.payrollV094HandleEnter=handleTopEnter; window.payrollV094DefaultPayDate=defaultPayDate; window.payrollV094InputMoney=inputMoney; window.payrollV094RecalcCurrent=recalcCurrent; window.payrollV177RecalcTotalsOnly=recalcTotalsOnly; window.payrollV094SaveCurrent=saveCurrent; window.payrollV094SaveAll=saveAll; window.payrollV094ShowGuide=showGuide; window.payrollV094UploadTax=uploadTax; window.payrollV094UploadPension=uploadPension; window.payrollV094UploadHealth=uploadHealth; window.recalcAllIncomeTaxV094=recalcAllIncomeTax;
   document.addEventListener('DOMContentLoaded',()=>{document.querySelectorAll('.brand-text span,.version-pill').forEach(el=>{if(el)el.textContent=VERSION;});});
 })();
 </script>
@@ -7203,14 +7204,14 @@ function handleHrSalaryBulkUpload(event){
 </style>
 
 <script id="v155-functions-api-sync">
-/* ===== V.1.7.6 로컬 Firebase Functions API 연동 테스트 =====
+/* ===== V.1.7.8 로컬 Firebase Functions API 연동 테스트 =====
    목적: cors-anywhere 직접 호출 제거, 로컬 Functions Emulator를 통한 법제처 API 호출 검증
    구조: ERP HTML → http://127.0.0.1:5001/.../getSettlementStandards → 법제처 API
 */
 (function(){
   'use strict';
 
-  const VERSION_V155='V.1.7.6';
+  const VERSION_V155='V.1.7.8';
   const API_MODEL_KEY='hypo_tax_api_model_v149';
   const API_SYNCED_AT='hypo_tax_api_synced_at_v149';
   const API_STATUS_KEY='hypo_tax_source_status_v149';
@@ -7255,7 +7256,7 @@ function handleHrSalaryBulkUpload(event){
   if(typeof window.normalizeUrl!=='function') window.normalizeUrl=function(url){url=String(url||'#').trim(); if(!url||url==='#')return '#'; return /^https?:\/\//i.test(url)?url:'https://'+url;};
 
   function safeJson(key,def=null){try{const raw=localStorage.getItem(key);return raw?JSON.parse(raw):def;}catch(e){return def;}}
-  function saveJson(key,val){try{localStorage.setItem(key,JSON.stringify(val));}catch(e){console.warn('[V.1.7.6] 저장 실패',key,e);}}
+  function saveJson(key,val){try{localStorage.setItem(key,JSON.stringify(val));}catch(e){console.warn('[V.1.7.8] 저장 실패',key,e);}}
   function hasManualTaxTable(){const m=safeJson(MANUAL_TAX_KEY,null);return !!(m&&((Array.isArray(m.rows)&&m.rows.length)||(Array.isArray(m)&&m.length)||(Array.isArray(m.brackets)&&m.brackets.length)));}
   function getFunctionsUrl(){return localStorage.getItem('hypo_functions_api_url_v155') || DEFAULT_FUNCTIONS_URL;}
   function setStatus(kind,text){
@@ -7302,10 +7303,10 @@ function handleHrSalaryBulkUpload(event){
       localStorage.setItem(API_STATUS_KEY,model.okCount===model.totalCount?'api':(model.okCount>0?'partial':'fallback'));
       updateTaxSyncStatusV155();
       if(typeof window.renderSettlementStandardIfVisibleV155==='function') window.renderSettlementStandardIfVisibleV155();
-      if(model.okCount!==model.totalCount) console.warn('[V.1.7.6] 일부 API 동기화 실패/기본값 보완',model.failures||model.sources);
+      if(model.okCount!==model.totalCount) console.warn('[V.1.7.8] 일부 API 동기화 실패/기본값 보완',model.failures||model.sources);
       return model;
     })().catch(err=>{
-      console.warn('[V.1.7.6] 로컬 Functions API 동기화 실패:',err);
+      console.warn('[V.1.7.8] 로컬 Functions API 동기화 실패:',err);
       const existing=safeJson(API_MODEL_KEY,null);
       if(!existing) saveJson(API_MODEL_KEY,DEFAULT_MODEL);
       localStorage.setItem(API_STATUS_KEY,'fallback');
@@ -7431,7 +7432,7 @@ function handleHrSalaryBulkUpload(event){
 
 
 <script id="v157-incentive-storage-hotfix-note">
-/* V.1.7.6: 인센티브/기타수당 업로드 데이터 저장키 불일치 보정
+/* V.1.7.8: 인센티브/기타수당 업로드 데이터 저장키 불일치 보정
    - V.1.5.6 증상: 업로드 건수는 표시되나 하단 표/급여정산 반영 데이터가 비어 있음
    - 원인: 업로드 함수는 hypo_hr_erp_incentive_etc_records_v102_YYYY-MM에 저장, 렌더/저장 함수는 hypo_hr_erp_incentive_etc_records_v102 객체의 [YYYY-MM]을 조회
    - 조치: 업로드 시 두 저장 구조를 모두 기록하되, 실제 렌더/급여정산 기준 구조를 우선 저장
@@ -7460,7 +7461,7 @@ function handleHrSalaryBulkUpload(event){
 </style>
 
 <script id="sme-tax-history-v159-patch">
-/* ===== V.1.7.6 중소기업감면 > 감면내역 조회 산정 로직 보정 =====
+/* ===== V.1.7.8 중소기업감면 > 감면내역 조회 산정 로직 보정 =====
    핵심 변경:
    - 기존: 업로드된 소득세를 원 소득세로 보고 90% 감면액 산정
    - 변경: 과세액 기준 원 소득세를 재계산하고, 업로드된 소득세와의 차액을 실제 감면세액으로 산정
@@ -7469,7 +7470,7 @@ function handleHrSalaryBulkUpload(event){
 (function(){
   'use strict';
 
-  const VERSION_V159 = 'V.1.7.6';
+  const VERSION_V159 = 'V.1.7.8';
   const SME_CAP = 2000000;
   const TAX_KEY = 'hypo_tax_table_model_v096';
   const API_TAX_KEY = 'hypo_tax_api_model_v149';
@@ -7818,7 +7819,7 @@ function handleHrSalaryBulkUpload(event){
 </style>
 
 <script id="sme-upload-v160-patch">
-/* ===== V.1.7.6 급여지급내역 업로드 시점 중소기업감면 산정 저장 패치 =====
+/* ===== V.1.7.8 급여지급내역 업로드 시점 중소기업감면 산정 저장 패치 =====
    핵심:
    1. 급여지급내역 업로드 성공 시점에 원 소득세/공제 소득세/감면세액을 즉시 산정·저장
    2. 감면내역 조회 메뉴는 저장된 결과를 조회 중심으로 표시
@@ -7827,7 +7828,7 @@ function handleHrSalaryBulkUpload(event){
 (function(){
   'use strict';
 
-  const VERSION_V160 = 'V.1.7.6';
+  const VERSION_V160 = 'V.1.7.8';
   const EMP_KEY = 'hypo_hr_erp_employees_v001';
   const PAYROLL_LINK_KEY = 'hypo_hr_erp_payroll_payment_history_link_v026';
   const LAST_UPLOAD_KEY = 'hypo_hr_erp_payroll_bulk_last_v160';
@@ -7850,7 +7851,7 @@ function handleHrSalaryBulkUpload(event){
     try {
       if (typeof window.saveEmployees === 'function') window.saveEmployees();
       else localStorage.setItem(EMP_KEY, JSON.stringify(employees()));
-    } catch(e) { console.warn('[V.1.7.6] save failed', e); }
+    } catch(e) { console.warn('[V.1.7.8] save failed', e); }
   }
   function toastV160(msg){
     try { if (typeof window.toast === 'function') window.toast(msg); else alert(msg); }
@@ -8247,7 +8248,7 @@ function handleHrSalaryBulkUpload(event){
         toastV160('급여지급내역 업로드 및 감면 산정이 완료되었습니다.');
         refreshOpenViews([...affectedYm][0]);
       } catch(err) {
-        console.error('[V.1.7.6] payroll upload failed', err);
+        console.error('[V.1.7.8] payroll upload failed', err);
         if (box) box.innerHTML = `<div class="validation-box error">급여지급내역 업로드 실패<br>${esc(err.message || err)}</div>`;
         logV160('BULK_UPLOAD','급여지급내역 업로드 실패',file.name,'danger');
       } finally {
@@ -8433,14 +8434,14 @@ function handleHrSalaryBulkUpload(event){
 
 
 <script id="retirement-insurance-monthly-average-v168-patch">
-/* ===== V.1.7.6 퇴사자 건강보험/고용보험 정산 기준 변경 =====
+/* ===== V.1.7.8 퇴사자 건강보험/고용보험 정산 기준 변경 =====
    - V.1.6.7 기준 안정본에서 재시작
    - 건강보험/고용보험 결정보험료 산정 기준을 과세보수 총액 직접 적용 방식에서 월평균보수 기준 방식으로 변경
    - 1~4월 퇴사자 전년도+당해년도 2행 정산 구조는 V.1.6.7과 동일하게 유지
    - Codex 협업 중 추가된 wrapper/override 안정화 레이어는 반영하지 않음
 */
 window.__HR_ERP_V168_AUDIT__ = {
-  version: 'V.1.7.6',
+  version: 'V.1.7.8',
   base: 'hr_erp_V.1.6.7.html',
   scope: '퇴사자 정산 > 건강보험/고용보험 정산',
   changed: [
@@ -8460,14 +8461,14 @@ window.__HR_ERP_V168_AUDIT__ = {
 
 
 <script id="retirement-insurance-rates-v171-patch">
-/* ===== V.1.7.6 퇴사자 정산 연도별 건강보험/장기요양 요율 적용 =====
+/* ===== V.1.7.8 퇴사자 정산 연도별 건강보험/장기요양 요율 적용 =====
    - 2026년 건강보험 전체요율 7.19%, 근로자부담 3.595%
    - 2026년 장기요양보험료율 소득 대비 0.9448%
    - 장기요양보험료 = 건강보험료 × (장기요양보험료율 / 건강보험료율)
    - 기존 V.1.7.0의 실 근무월수/건강보험 산정월수 분리 구조 유지
 */
 window.__HR_ERP_V171_AUDIT__ = {
-  version: 'V.1.7.6',
+  version: 'V.1.7.8',
   base: 'hr_erp_V.1.7.0.html',
   scope: '퇴사자 정산 > 건강보험/장기요양 연도별 요율',
   changed: [
@@ -8485,14 +8486,14 @@ window.__HR_ERP_V171_AUDIT__ = {
 
 
 <script id="retirement-insurance-display-v172-patch">
-/* ===== V.1.7.6 퇴사자 건강보험/고용보험 정산 화면 표시항목 정리 =====
+/* ===== V.1.7.8 퇴사자 건강보험/고용보험 정산 화면 표시항목 정리 =====
    - 내부 계산 데이터는 유지
    - 화면에서는 건강보험 근로자요율, 장기요양 건보대비율, 급여행수, 실 근무월수, 건강보험 산정월수, 고용보험 산정월수 숨김
    - 실무 확인에 필요한 과세보수, 월평균보수, 월 보험료, 결정/기납부/정산금액 중심으로 표시
 */
 window.__HR_ERP_V172_AUDIT__ = {
-  version: 'V.1.7.6',
-  base: 'hr_erp_V.1.7.6.html',
+  version: 'V.1.7.8',
+  base: 'hr_erp_V.1.7.8.html',
   scope: '퇴사자 정산 > 건강보험/고용보험 정산 화면 표시항목',
   changed: [
     '정산 계산 내부 데이터 6개 항목 화면 미노출 처리',
@@ -8511,7 +8512,7 @@ window.__HR_ERP_V172_AUDIT__ = {
 
 
 <script id="employee-register-list-v173-patch">
-/* ===== V.1.7.6 사원 등록/수정 좌측 사원 목록 초기 표시 안정화 =====
+/* ===== V.1.7.8 사원 등록/수정 좌측 사원 목록 초기 표시 안정화 =====
    - 메뉴 진입 직후 regListBody 생성 타이밍과 renderRegisterList 실행 타이밍 불일치 보정
    - 검색어 입력/삭제 전에도 전체 사원 목록이 즉시 표시되도록 지연 재렌더링
 */
@@ -8526,7 +8527,7 @@ window.__HR_ERP_V172_AUDIT__ = {
         window.renderRegisterList();
       }
     } catch(e) {
-      console.warn('[V.1.7.6] renderRegisterList failed', e);
+      console.warn('[V.1.7.8] renderRegisterList failed', e);
     }
   }
 
@@ -8565,7 +8566,7 @@ window.__HR_ERP_V172_AUDIT__ = {
 
 <script id="hr-erp-v173-audit">
 window.__HR_ERP_V173_AUDIT__ = {
-  version: 'V.1.7.6',
+  version: 'V.1.7.8',
   base: 'V.1.7.2',
   scope: [
     '임금 > 정규근로자 임금 하위메뉴 귀속년월 선택 구조 통일',
@@ -8582,7 +8583,7 @@ window.__HR_ERP_V173_AUDIT__ = {
 
 
 <script id="sme-tax-history-routing-v174-patch">
-/* ===== V.1.7.6 중소기업감면 > 감면내역 조회 화면 구조 복구 =====
+/* ===== V.1.7.8 중소기업감면 > 감면내역 조회 화면 구조 복구 =====
    원인:
    - V.1.7.3에서 메뉴 노출을 위해 SME_TAX_DETAIL ID를 추가했으나,
      기존에 정상 동작하던 감면내역 조회 화면은 SME_TAX_HISTORY 라우팅에 연결되어 있었음.
@@ -8596,7 +8597,7 @@ window.__HR_ERP_V173_AUDIT__ = {
 (function(){
   'use strict';
 
-  const PATCH_VERSION = 'V.1.7.6';
+  const PATCH_VERSION = 'V.1.7.8';
 
   function getHistoryPage(){
     if (typeof window.smeTaxHistoryPageV160 === 'function') return window.smeTaxHistoryPageV160();
@@ -8662,14 +8663,14 @@ window.__HR_ERP_V173_AUDIT__ = {
 
 
 <script id="payroll-submenus-restore-v176-audit">
-/* ===== V.1.7.6 정규근로자 임금 하위메뉴 화면 구조 복구 =====
+/* ===== V.1.7.8 정규근로자 임금 하위메뉴 화면 구조 복구 =====
    기준:
    - V.1.7.5 파일을 기준으로 작업
    - 초과근로 / 인센티브·기타수당 / 연차수당 메뉴 화면 함수만 V.1.7.2 기준으로 복구
    - 다른 메뉴와 퇴사자 정산·급여정산 계산 로직은 수정하지 않음
 */
 window.__HR_ERP_V176_AUDIT__ = {
-  version: 'V.1.7.6',
+  version: 'V.1.7.8',
   base: 'hr_erp_V.1.7.5.html',
   restoredFrom: 'hr_erp_V.1.7.2.html',
   scope: [
@@ -8686,6 +8687,324 @@ window.__HR_ERP_V176_AUDIT__ = {
     '그 외 메뉴'
   ]
 };
+</script>
+
+
+<script id="payroll-trigger-control-v177-patch">
+/* ===== V.1.7.8 급여정산 자동계산 트리거 정리 =====
+   작업 범위:
+   - 세부 계산식과 데이터 연동 로직은 변경하지 않음
+   - 급여정산에서 소득세/지방소득세/고용보험 자동계산 실행 시점만 정리
+
+   정상 실행 시점:
+   1. 급여정산 데이터 불러오기: payrollV101ReloadSalaryInfo()
+   2. 지급항목 입력 변경: payrollV094RecalcCurrent()
+
+   실행 금지 시점:
+   1. 귀속연도/귀속월 변경: 대상자 목록만 즉시 갱신
+   2. 사원 선택/화면 렌더링: 기존 저장값 표시만 수행
+   3. 해당 사원 저장/전체 저장: 저장만 수행
+   4. 공제항목 직접 입력: 합계 표시만 갱신
+*/
+window.__HR_ERP_V177_AUDIT__ = {
+  version: 'V.1.7.8',
+  base: 'hr_erp_V.1.7.6.html',
+  scope: '급여정산 자동계산 트리거 정리',
+  changed: [
+    '귀속연도/귀속월 변경 시 급여지급대상자 목록 즉시 갱신',
+    '사원 선택 및 화면 렌더링 시 applyTax 미실행',
+    'readCurrentForm에서 applyTax 미실행',
+    '저장/전체저장 시 소득세·지방소득세·고용보험 재계산 미실행',
+    '지급항목 변경 시에만 payrollV094RecalcCurrent를 통해 자동계산 실행',
+    '공제항목 직접 입력 시 합계 표시만 갱신'
+  ],
+  notChanged: [
+    '소득세 계산식',
+    '지방소득세 계산식',
+    '고용보험 계산식',
+    '중소기업감면 계산식',
+    '초과근로/인센티브/연차수당 데이터 구조',
+    '퇴사자 정산 계산식'
+  ]
+};
+</script>
+
+
+<script id="payroll-deduction-trigger-guard-v178">
+/* ===== V.1.7.8 급여정산 공제 반복계산 차단 안정화 =====
+   목적:
+   - 계산식/업무규칙 삭제 또는 변경이 아니라, 비허용 이벤트에서 누적 패치가 예약하는 반복 재계산을 차단
+   - 허용 트리거에서는 현재 record 기준 계산/합계 갱신이 1회 실행될 수 있도록 유지
+
+   허용:
+   - 지급항목 입력 변경
+   - 임금정보 불러오기
+   - 전체 소득세 재계산
+   - 저장 직전/저장 동작
+
+   차단:
+   - 사원 선택 후 delayed patch 반복
+   - 조회/render 후 delayed patch 반복
+   - 저장 후 render에 따른 delayed patch 반복
+   - document click/input/change listener가 반복 예약하는 patchDom/patchSoon/patchAll/schedulePatch 계열
+*/
+(function(){
+  'use strict';
+
+  const PATCH_VERSION = 'V.1.7.8';
+  const W = window;
+  const D = document;
+
+  const state = W.__PAYROLL_CALC_GUARD_V178__ = W.__PAYROLL_CALC_GUARD_V178__ || {
+    version: PATCH_VERSION,
+    currentReason: '',
+    eventType: '',
+    eventTarget: null,
+    blockedTimeouts: 0,
+    allowedTimeouts: 0,
+    blockedCalls: {},
+    allowedCalls: {},
+    lastEventAt: 0,
+    lastReason: '',
+    debug: false
+  };
+
+  const allowedReasons = new Set([
+    'INPUT_CHANGE',
+    'RELOAD_SALARY',
+    'RECALC_ALL_TAX',
+    'BEFORE_SAVE',
+    'SAVE_CURRENT',
+    'SAVE_ALL'
+  ]);
+
+  const disallowedReasons = new Set([
+    'SELECT_EMPLOYEE',
+    'RENDER_LIST',
+    'RENDER_PAGE',
+    'AFTER_SAVE_RENDER',
+    'DELAYED_PATCH',
+    'DOCUMENT_CLICK_SIDE_EFFECT',
+    'DOCUMENT_CHANGE_SIDE_EFFECT'
+  ]);
+
+  function now(){ return Date.now ? Date.now() : new Date().getTime(); }
+  function log(type, key){
+    const bucket = type === 'blocked' ? state.blockedCalls : state.allowedCalls;
+    bucket[key] = (bucket[key] || 0) + 1;
+  }
+  function isPayrollAreaTarget(t){
+    return !!(t && t.closest && (
+      t.closest('#payrollRightV094') ||
+      t.closest('#payrollFormArea') ||
+      t.closest('#payrollPageV094') ||
+      t.closest('.payroll-v094-page') ||
+      t.closest('.payroll-v094-wrap')
+    ));
+  }
+  function isPaymentInput(t){
+    if(!t || !t.matches) return false;
+    const key = String(t.dataset?.payKey || t.id || '').toLowerCase();
+    return (
+      t.matches('#payrollRightV094 input[data-pay-key]') &&
+      /base|meal|car|fixed|overtime|incentive|etc|annual|bonus|retro|traffic|service|rank|drive|pay/i.test(key) &&
+      !/tax|deduct|pension|health|insurance|employment|local/i.test(key)
+    ) || /^pay(Base|Meal|Car|Fixed|Overtime|Incentive|Etc|Annual)/.test(t.id || '');
+  }
+  function isDeductionInput(t){
+    if(!t || !t.matches) return false;
+    const key = String(t.dataset?.payKey || t.id || '').toLowerCase();
+    return /tax|deduct|pension|health|insurance|employment|local|student/i.test(key) ||
+      /^pay(IncomeTax|LocalTax|Pension|Health|Insurance|Employment|EtcDeduct|Adj)/.test(t.id || '');
+  }
+  function textOf(t){
+    return String(t?.textContent || t?.value || '').trim();
+  }
+  function classifyClick(t){
+    const txt = textOf(t);
+    if(/임금정보\s*불러오기/.test(txt)) return 'RELOAD_SALARY';
+    if(/전체\s*소득세\s*재계산/.test(txt)) return 'RECALC_ALL_TAX';
+    if(/해당\s*사원\s*저장|전체\s*저장|저장/.test(txt)) return 'BEFORE_SAVE';
+    if(/조회/.test(txt)) return 'RENDER_LIST';
+    return 'DOCUMENT_CLICK_SIDE_EFFECT';
+  }
+  function classifyChange(t){
+    if(!t) return 'DOCUMENT_CHANGE_SIDE_EFFECT';
+    if(t.id === 'regularPayYmV094' || t.id === 'payrollYm' || t.id === 'regularPayYearV101' || t.id === 'regularPayMonthV101') return 'RENDER_LIST';
+    if(isPaymentInput(t)) return 'INPUT_CHANGE';
+    if(isDeductionInput(t)) return 'DEDUCTION_MANUAL';
+    if(isPayrollAreaTarget(t)) return 'DOCUMENT_CHANGE_SIDE_EFFECT';
+    return '';
+  }
+  function classifyInput(t){
+    if(isPaymentInput(t)) return 'INPUT_CHANGE';
+    if(isDeductionInput(t)) return 'DEDUCTION_MANUAL';
+    if(isPayrollAreaTarget(t)) return 'DOCUMENT_CHANGE_SIDE_EFFECT';
+    return '';
+  }
+  function withReason(reason, fn){
+    const prev = state.currentReason;
+    state.currentReason = reason || '';
+    state.lastReason = state.currentReason;
+    try { return fn(); }
+    finally { state.currentReason = prev; }
+  }
+  function isAllowedReason(reason){
+    return allowedReasons.has(reason);
+  }
+  function isDisallowedReason(reason){
+    return disallowedReasons.has(reason) || !reason || reason === 'DEDUCTION_MANUAL';
+  }
+  function shouldBlockTimeout(stack){
+    const reason = state.currentReason || state.eventType || '';
+    const s = String(stack || '');
+
+    const isPayrollPatchStack =
+      /schedulePatch|patchSoon|patchAll|patchDom|patchAfterRender|deferSync|schedule\W|zeroAllRecords|patchCurrent|patchSelectedPayroll|syncKpiFromBottom|applyDeductionPayroll|patchMonth|disableRepeatedAutoTax/i.test(s);
+
+    const isPayrollFunctionStack =
+      /payrollV094|regularPay|recalcAllIncomeTax|savePayrollCurrent|selectPayrollEmployee|renderPage/i.test(s);
+
+    if(!isPayrollPatchStack && !isPayrollFunctionStack) return false;
+
+    if(isAllowedReason(reason)) return false;
+
+    if(isDisallowedReason(reason)) return true;
+
+    return false;
+  }
+
+  // window capture phase: document capture listener보다 먼저 실행되어 이번 이벤트의 reason을 기록
+  W.addEventListener('click', function(e){
+    state.eventTarget = e.target;
+    state.eventType = classifyClick(e.target);
+    state.lastEventAt = now();
+  }, true);
+
+  W.addEventListener('input', function(e){
+    state.eventTarget = e.target;
+    state.eventType = classifyInput(e.target);
+    state.lastEventAt = now();
+  }, true);
+
+  W.addEventListener('change', function(e){
+    state.eventTarget = e.target;
+    state.eventType = classifyChange(e.target);
+    state.lastEventAt = now();
+  }, true);
+
+  ['click','input','change'].forEach(evt=>{
+    W.addEventListener(evt, function(){
+      setTimeout(function(){
+        if(now() - state.lastEventAt > 50){
+          state.eventType = '';
+          state.eventTarget = null;
+        }
+      }, 80);
+    }, true);
+  });
+
+  // 누적 패치들이 setTimeout으로 반복 예약하는 재계산/patch 흐름을 reason 기준으로 차단
+  if(!W.__payrollSetTimeoutGuardV178__){
+    W.__payrollSetTimeoutGuardV178__ = true;
+    const nativeSetTimeout = W.setTimeout.bind(W);
+    W.setTimeout = function(cb, delay){
+      let stack = '';
+      try { stack = new Error().stack || ''; } catch(e) {}
+      if(shouldBlockTimeout(stack)){
+        state.blockedTimeouts += 1;
+        log('blocked', state.currentReason || state.eventType || 'UNKNOWN');
+        if(state.debug) console.warn('[V.1.7.8] blocked payroll delayed patch', state.currentReason || state.eventType, stack);
+        return nativeSetTimeout(function(){}, 0);
+      }
+      state.allowedTimeouts += 1;
+      log('allowed', state.currentReason || state.eventType || 'NORMAL');
+      return nativeSetTimeout(cb, delay);
+    };
+  }
+
+  function wrapWithReason(name, reason){
+    const prev = W[name];
+    if(typeof prev !== 'function' || prev.__v178ReasonGuard) return;
+    const wrapped = function(){
+      return withReason(reason, () => prev.apply(this, arguments));
+    };
+    wrapped.__v178ReasonGuard = true;
+    wrapped.__v178Original = prev;
+    W[name] = wrapped;
+  }
+
+  // 허용 트리거
+  wrapWithReason('payrollV101ReloadSalaryInfo', 'RELOAD_SALARY');
+  wrapWithReason('recalcAllIncomeTaxV094', 'RECALC_ALL_TAX');
+  wrapWithReason('payrollV094RecalcCurrent', 'INPUT_CHANGE');
+  wrapWithReason('payrollV094SaveCurrent', 'BEFORE_SAVE');
+  wrapWithReason('payrollV094SaveAll', 'BEFORE_SAVE');
+  wrapWithReason('savePayrollCurrent', 'BEFORE_SAVE');
+
+  // 비허용 트리거
+  wrapWithReason('payrollV094SelectEmp', 'SELECT_EMPLOYEE');
+  wrapWithReason('selectPayrollEmployee', 'SELECT_EMPLOYEE');
+  wrapWithReason('payrollV094RenderList', 'RENDER_LIST');
+
+  const prevRenderPageV178 = W.renderPage;
+  if(typeof prevRenderPageV178 === 'function' && !prevRenderPageV178.__v178ReasonGuard){
+    const wrappedRenderPage = function(id){
+      const reason = id === 'PAYROLL_CLOSE' ? 'RENDER_PAGE' : '';
+      return withReason(reason, () => prevRenderPageV178.apply(this, arguments));
+    };
+    wrappedRenderPage.__v178ReasonGuard = true;
+    wrappedRenderPage.__v178Original = prevRenderPageV178;
+    W.renderPage = wrappedRenderPage;
+  }
+
+  // 공제항목 수동 입력은 공제값을 재계산하지 않고 합계만 갱신
+  W.addEventListener('input', function(e){
+    const t = e.target;
+    if(!isDeductionInput(t)) return;
+    if(typeof W.calcPayrollInput === 'function'){
+      withReason('DEDUCTION_MANUAL', () => {
+        try { W.calcPayrollInput(); } catch(err) { console.warn('[V.1.7.8] deduction total refresh failed', err); }
+      });
+    }
+  }, false);
+
+  function applyVersion(){
+    try {
+      W.VERSION = PATCH_VERSION;
+      document.title = '히포케이메논 인사 ERP ' + PATCH_VERSION;
+      document.querySelectorAll('.brand-text span,.version-pill').forEach(el => { if(el) el.textContent = PATCH_VERSION; });
+      const sub = document.querySelector('.login-card .sub');
+      if(sub) sub.textContent = PATCH_VERSION + ' · 급여정산 반복계산 차단 안정화';
+    } catch(e) {}
+  }
+
+  D.addEventListener('DOMContentLoaded', function(){
+    applyVersion();
+    setTimeout(applyVersion, 0);
+    setTimeout(applyVersion, 300);
+  });
+  applyVersion();
+
+  W.__HR_ERP_V178_AUDIT__ = {
+    version: PATCH_VERSION,
+    base: 'hr_erp_V.1.7.7.html',
+    scope: '급여정산 공제항목 반복계산 차단 안정화',
+    goal: '비허용 이벤트의 중복 재계산 차단, 허용 트리거의 1회 계산 유지',
+    allowed: ['INPUT_CHANGE','RELOAD_SALARY','RECALC_ALL_TAX','BEFORE_SAVE'],
+    blocked: ['SELECT_EMPLOYEE','RENDER_LIST','RENDER_PAGE','AFTER_SAVE_RENDER','DELAYED_PATCH','DOCUMENT_CLICK_SIDE_EFFECT','DOCUMENT_CHANGE_SIDE_EFFECT'],
+    preserved: [
+      '기존 계산식',
+      '고용보험 미해당자 0원 규칙',
+      '퇴사월 소득세/지방소득세 0원 규칙',
+      '중소기업감면 규칙',
+      '학자금공제 규칙',
+      'payrollHistory 저장 구조',
+      '급여지급내역/퇴사자 정산 연동 구조'
+    ],
+    note: 'V.1.7.9 이후 calculatePayrollDeductions/calculatePayrollTotals 단일 파이프라인으로 구조개편 예정'
+  };
+})();
 </script>
 
 </body>
@@ -11177,8 +11496,8 @@ window.__HR_ERP_V176_AUDIT__ = {
   const saveNow=(reason)=>{try{ if(window.hypoIndexedDbV123&&typeof window.hypoIndexedDbV123.saveNow==='function') window.hypoIndexedDbV123.saveNow(reason); }catch(e){console.warn('[V.1.2.8 final] IndexedDB save failed',e);}};
   function applyVersion(){
     try{document.title='히포케이메논 인사 ERP V.1.2.9';}catch(e){}
-    try{document.querySelectorAll('.brand-text span,.version-pill').forEach(el=>{if(el)el.textContent='V.1.7.6';});}catch(e){}
-    try{const sub=document.querySelector('.login-card .sub'); if(sub)sub.textContent='V.1.7.6 · IndexedDB 테스트 저장모드';}catch(e){}
+    try{document.querySelectorAll('.brand-text span,.version-pill').forEach(el=>{if(el)el.textContent='V.1.7.8';});}catch(e){}
+    try{const sub=document.querySelector('.login-card .sub'); if(sub)sub.textContent='V.1.7.8 · IndexedDB 테스트 저장모드';}catch(e){}
   }
   function install(){
     window.__HYPO_STORAGE_MODE__='indexeddb-test';
@@ -12099,14 +12418,14 @@ window.__HR_ERP_V176_AUDIT__ = {
 
 
 <script id="payroll-v140-retiree-tax-priority-final">
-/* ===== V.1.7.6 급여정산 퇴사월 소득세/지방소득세 우선순위 최종 보정 =====
+/* ===== V.1.7.8 급여정산 퇴사월 소득세/지방소득세 우선순위 최종 보정 =====
    - 근로소득 간이세액표 계산보다 퇴사월 0원 처리 규칙을 우선 적용
    - JavaScript의 0 || 자동계산 문제를 ?? 기준으로 보정
    - 화면 렌더링, 재계산, 임금정보 불러오기, 해당 사원 저장, 전체 저장 후에도 0원 유지
 */
 (function(){
   'use strict';
-  const PATCH_VERSION='V.1.7.6';
+  const PATCH_VERSION='V.1.7.8';
   const $=id=>document.getElementById(id);
   const employees=()=>Array.isArray(window.sampleEmployees)?window.sampleEmployees:(Array.isArray(sampleEmployees)?sampleEmployees:[]);
   const num=v=>Number(String(v??'').replace(/[^0-9.-]/g,''))||0;
@@ -12144,7 +12463,7 @@ window.__HR_ERP_V176_AUDIT__ = {
 </html>
 
 <script id="v142-internal-rounding-policy">
-/* ===== V.1.7.6 회사 내부 계산 정책 =====
+/* ===== V.1.7.8 회사 내부 계산 정책 =====
    1) 지방소득세: 소득세의 10%를 10원 단위 절사
    2) 초과근로수당: 산출금액을 원 단위 올림 유지
 */
@@ -12174,7 +12493,7 @@ window.__HR_ERP_V176_AUDIT__ = {
           }));
           if (typeof window.saveEmployees === 'function') window.saveEmployees();
         }
-      } catch(e) { console.warn('[V.1.7.6] overtime ceil guard failed', e); }
+      } catch(e) { console.warn('[V.1.7.8] overtime ceil guard failed', e); }
       return ret;
     };
     window.overtimeV1000Save.__v142CeilOvertime = true;
@@ -12184,7 +12503,7 @@ window.__HR_ERP_V176_AUDIT__ = {
 
 
 <script id="v156-status-and-site-fix">
-/* ===== V.1.7.6 정산기준 상태표시/사이트관리 보정 =====
+/* ===== V.1.7.8 정산기준 상태표시/사이트관리 보정 =====
    - 급여정산 화면 렌더링 후 새로 생성되는 상태 배지가 기존 기본값(빨간색)으로 남는 문제 보정
    - 사이트 관리 메뉴 진입 시 siteRows 미정의로 page registry 오류가 나는 문제 보정
 */
@@ -12317,7 +12636,7 @@ window.__HR_ERP_V176_AUDIT__ = {
 
 
 <script id="storage-continuity-v158-patch">
-/* ===== V.1.7.6 저장 연속성 보강 패치 =====
+/* ===== V.1.7.8 저장 연속성 보강 패치 =====
    목적:
    - 기존 localStorage / IndexedDB 저장키를 유지하여 버전업 후에도 기존 입력 데이터를 그대로 조회
    - 접속 기준 주소가 달라질 경우 브라우저가 다른 저장공간으로 인식할 수 있으므로 경고 표시
@@ -12363,7 +12682,7 @@ window.__HR_ERP_V176_AUDIT__ = {
 
   function notifyOriginIfNeededV158(){
     try {
-      console.info('[V.1.7.6 Storage Continuity]', {
+      console.info('[V.1.7.8 Storage Continuity]', {
         expectedOrigin: EXPECTED_ORIGIN_V158,
         currentOrigin: location.origin,
         sameOrigin: location.origin === EXPECTED_ORIGIN_V158,
@@ -12376,7 +12695,7 @@ window.__HR_ERP_V176_AUDIT__ = {
         else console.warn(msg);
       }
     } catch(e) {
-      console.warn('[V.1.7.6] 저장 연속성 점검 중 오류', e);
+      console.warn('[V.1.7.8] 저장 연속성 점검 중 오류', e);
     }
   }
 
@@ -12423,7 +12742,7 @@ window.__HR_ERP_V176_AUDIT__ = {
 </style>
 
 <script id="settlement-tax-table-v161-patch">
-/* ===== V.1.7.6 API 근로소득간이세액표 우선 적용 패치 =====
+/* ===== V.1.7.8 API 근로소득간이세액표 우선 적용 패치 =====
    변경 목적:
    1. 급여정산 월 소득세 계산 기준을 API 간이세액표 1순위로 변경
    2. API 간이세액표 미수신 시 수동 업로드 간이세액표 2순위 적용
@@ -12432,7 +12751,7 @@ window.__HR_ERP_V176_AUDIT__ = {
 (function(){
   'use strict';
 
-  const PATCH_VERSION = 'V.1.7.6';
+  const PATCH_VERSION = 'V.1.7.8';
   const EMP_KEY = 'hypo_hr_erp_employees_v001';
   const API_MODEL_KEY = 'hypo_tax_api_model_v149';
   const GOV_KEY = 'hypo_settlement_government_standards_v155';
@@ -12471,7 +12790,7 @@ window.__HR_ERP_V176_AUDIT__ = {
     try { const raw = localStorage.getItem(key); return raw ? JSON.parse(raw) : def; } catch(e) { return def; }
   }
   function saveJson(key, val){
-    try { localStorage.setItem(key, JSON.stringify(val)); } catch(e) { console.warn('[V.1.7.6] 저장 실패', key, e); }
+    try { localStorage.setItem(key, JSON.stringify(val)); } catch(e) { console.warn('[V.1.7.8] 저장 실패', key, e); }
   }
   function saveEmp(){
     try { if (typeof window.saveEmployees === 'function') window.saveEmployees(); else localStorage.setItem(EMP_KEY, JSON.stringify(employees())); } catch(e) {}
@@ -12703,7 +13022,7 @@ window.__HR_ERP_V176_AUDIT__ = {
     const wrapped = function(){
       if (name === 'payrollV094SelectEmp' || name === 'selectPayrollEmployee') window.__payrollSelectedV161 = arguments[0];
       const ret = prev.apply(this, arguments);
-      try { fn.apply(this, arguments); } catch(e) { console.warn('[V.1.7.6] wrapper error', name, e); }
+      try { fn.apply(this, arguments); } catch(e) { console.warn('[V.1.7.8] wrapper error', name, e); }
       return ret;
     };
     wrapped.__v161TaxPriority = true;
@@ -12940,7 +13259,7 @@ window.__HR_ERP_V176_AUDIT__ = {
 </style>
 
 <script id="settlement-tax-table-v162-patch">
-/* ===== V.1.7.6 API 근로소득간이세액표 보존·재호출 보정 =====
+/* ===== V.1.7.8 API 근로소득간이세액표 보존·재호출 보정 =====
    보정 사항:
    1. 수동 업로드 간이세액표 존재 여부와 관계없이 로컬 API 동기화 테스트 시 Functions를 반드시 호출
    2. Functions 응답의 monthlyTaxTable을 normalize 과정에서 누락하지 않고 별도 키에 영구 저장
@@ -12950,7 +13269,7 @@ window.__HR_ERP_V176_AUDIT__ = {
 (function(){
   'use strict';
 
-  const PATCH_VERSION = 'V.1.7.6';
+  const PATCH_VERSION = 'V.1.7.8';
   const API_MODEL_KEY = 'hypo_tax_api_model_v149';
   const GOV_KEY = 'hypo_settlement_government_standards_v155';
   const APPLIED_KEY = 'hypo_settlement_applied_standards_v155';
@@ -12990,7 +13309,7 @@ window.__HR_ERP_V176_AUDIT__ = {
       localStorage.setItem(key, JSON.stringify(value));
       return true;
     } catch(e) {
-      console.warn('[V.1.7.6] localStorage 저장 실패:', key, e);
+      console.warn('[V.1.7.8] localStorage 저장 실패:', key, e);
       return false;
     }
   }
@@ -13225,7 +13544,7 @@ window.__HR_ERP_V176_AUDIT__ = {
 
       updateStatus();
 
-      console.info('[V.1.7.6] API 동기화 완료', {
+      console.info('[V.1.7.8] API 동기화 완료', {
         okCount: model.okCount,
         totalCount: model.totalCount,
         monthlyRows: monthly?.rows?.length || 0,
@@ -13245,7 +13564,7 @@ window.__HR_ERP_V176_AUDIT__ = {
 
       return model;
     } catch(e) {
-      console.error('[V.1.7.6] API 동기화 실패', e);
+      console.error('[V.1.7.8] API 동기화 실패', e);
       updateStatus();
       if (typeof toast === 'function') toast('로컬 API 동기화에 실패했습니다. Functions CMD 상태를 확인해주세요.');
       throw e;
@@ -13351,7 +13670,7 @@ window.__HR_ERP_V176_AUDIT__ = {
     const manualRows = manualTable?.rows?.length || 0;
     const apiWarning = apiTable?.apiParseFailed
       ? `<div class="settle-v162-error">현재 표시되는 API 간이세액표는 Functions에서 실제 표 파싱에 실패하여 생성한 보조값입니다. 실무 적용 전 수동 업로드표와 금액 검증이 필요합니다.</div>`
-      : (apiRows ? `<div class="settle-v162-guard">API 근로소득간이세액표가 별도 캐시에 보존되어 있습니다. 급여정산 메뉴 작업 후에도 이 데이터가 삭제되지 않도록 V.1.7.6에서 보호했습니다.</div>` : '');
+      : (apiRows ? `<div class="settle-v162-guard">API 근로소득간이세액표가 별도 캐시에 보존되어 있습니다. 급여정산 메뉴 작업 후에도 이 데이터가 삭제되지 않도록 V.1.7.8에서 보호했습니다.</div>` : '');
 
     return `<div class="card">
       <h3>정산 기준</h3>
@@ -13475,7 +13794,7 @@ window.__HR_ERP_V176_AUDIT__ = {
 </style>
 
 <script id="retirement-settlement-v163-patch">
-/* ===== V.1.7.6 퇴사자 정산 메뉴/로직 추가 =====
+/* ===== V.1.7.8 퇴사자 정산 메뉴/로직 추가 =====
    반영 사항:
    1. 임금 > 정규근로자 임금 > 퇴사자 정산 메뉴 신설
    2. 중도퇴사 연말정산 / 건강보험·고용보험 정산 / 퇴사자 정산 결과 조회 화면 추가
@@ -13489,7 +13808,7 @@ window.__HR_ERP_V176_AUDIT__ = {
 (function(){
   'use strict';
 
-  const PATCH_VERSION = 'V.1.7.6';
+  const PATCH_VERSION = 'V.1.7.8';
   const RESULT_KEY = 'hypo_retirement_settlement_results_v163';
   let selectedRetireNoV163 = '';
 
@@ -13508,7 +13827,7 @@ window.__HR_ERP_V176_AUDIT__ = {
     try { return JSON.parse(localStorage.getItem(RESULT_KEY) || '[]') || []; } catch(e){ return []; }
   }
   function writeResults(rows){
-    try { localStorage.setItem(RESULT_KEY, JSON.stringify(rows || [])); } catch(e){ console.warn('[V.1.7.6] 퇴사자 정산 저장 실패', e); }
+    try { localStorage.setItem(RESULT_KEY, JSON.stringify(rows || [])); } catch(e){ console.warn('[V.1.7.8] 퇴사자 정산 저장 실패', e); }
   }
   function saveResult(row){
     const rows = readResults();
@@ -13679,7 +13998,7 @@ window.__HR_ERP_V176_AUDIT__ = {
   }
   function insuranceMonthsByHireResign(e, year){
     /*
-      V.1.7.6 건강보험/장기요양 산정 기준
+      V.1.7.8 건강보험/장기요양 산정 기준
 
       1. 실 근무월수
       - 월평균보수 계산용
@@ -13750,7 +14069,7 @@ window.__HR_ERP_V176_AUDIT__ = {
 
   function retirementInsuranceRatesByYear(year){
     /*
-      V.1.7.6 퇴사자 정산 연도별 건강보험/장기요양 요율
+      V.1.7.8 퇴사자 정산 연도별 건강보험/장기요양 요율
       - 2025년: 건강보험 7.09% / 근로자 3.545%, 장기요양 소득 대비 0.9182%
       - 2026년: 건강보험 7.19% / 근로자 3.595%, 장기요양 소득 대비 0.9448%
       - 장기요양보험료 = 건강보험료 × (장기요양보험료율 / 건강보험료율)
@@ -13797,7 +14116,7 @@ window.__HR_ERP_V176_AUDIT__ = {
     const taxable = agg.taxable;
 
     /*
-      V.1.7.6 건강보험/고용보험 정산 기준
+      V.1.7.8 건강보험/고용보험 정산 기준
 
       [월평균보수]
       - 실 근무월수 기준
@@ -14176,7 +14495,7 @@ window.__HR_ERP_V176_AUDIT__ = {
     if(content) {
       try { content.innerHTML = window.pageBody(window.currentPage, found.node.title); }
       catch(err) {
-        console.error('[V.1.7.6] page render error:', window.currentPage, err);
+        console.error('[V.1.7.8] page render error:', window.currentPage, err);
         content.innerHTML = `<div class="card"><div class="work-box">화면 렌더링 중 오류가 발생했습니다.<br>${esc(err.message || err)}</div></div>`;
       }
     }
@@ -14228,7 +14547,7 @@ window.__HR_ERP_V176_AUDIT__ = {
   }
 </style>
 <script id="payroll-health-sync-v164-patch">
-/* ===== V.1.7.6 퇴사월 건강보험 급여지급내역 반영 보정 =====
+/* ===== V.1.7.8 퇴사월 건강보험 급여지급내역 반영 보정 =====
    원인:
    - 일부 급여정산 저장 로직은 건강보험 값을 legacy 필드인 insurance/payInsurance에 저장함.
    - 급여지급내역 조회 및 퇴사자 건강보험 정산은 health 필드를 기준으로 집계함.
@@ -14242,7 +14561,7 @@ window.__HR_ERP_V176_AUDIT__ = {
 (function(){
   'use strict';
 
-  const PATCH_VERSION = 'V.1.7.6';
+  const PATCH_VERSION = 'V.1.7.8';
   const $ = id => document.getElementById(id);
   const num = v => Number(String(v ?? '').replace(/[^0-9.-]/g,'')) || 0;
   const getYm = r => {
@@ -14442,7 +14761,7 @@ window.__HR_ERP_V176_AUDIT__ = {
   .payroll-v165-note{border:1px solid #cfe4ff;background:#eef6ff;color:#1b65b9;border-radius:10px;padding:8px 10px;margin:8px 0;line-height:1.5;font-size:11px!important}
 </style>
 <script id="payroll-detail-deduction-sync-v165-patch">
-/* ===== V.1.7.6 급여지급내역 상세 공제항목 표시 보정 =====
+/* ===== V.1.7.8 급여지급내역 상세 공제항목 표시 보정 =====
    보정 내용:
    1. 건강보험/국민연금/고용보험 필드 alias 통합
       - 국민연금: pension, nationalPension, deducts['국민연금']
@@ -14453,7 +14772,7 @@ window.__HR_ERP_V176_AUDIT__ = {
 */
 (function(){
   'use strict';
-  const PATCH_VERSION='V.1.7.6';
+  const PATCH_VERSION='V.1.7.8';
   const EMP_KEY='hypo_hr_erp_employees_v001';
   const $=id=>document.getElementById(id);
   const h=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
@@ -14565,7 +14884,7 @@ window.__HR_ERP_V176_AUDIT__ = {
     const body=$('payDetailBodyV040')||$('payDetailBody');
     const modal=$('payDetailModalV040')||$('payDetailModal');
     if(title) title.textContent=`${emp.name} ${y.year}년 ${y.month}월 지급 상세`;
-    if(body) body.innerHTML=`<div class="payroll-v165-note">V.1.7.6 기준으로 국민연금·건강보험·고용보험 alias 필드를 통합해 표시합니다.</div><div class="pay-summary-row"><div class="kpi"><div class="label">총 지급액</div><div class="num">${won(r.gross)}</div></div><div class="kpi"><div class="label">총 공제액</div><div class="num">${won(r.deduct)}</div></div><div class="kpi"><div class="label">실 지급액</div><div class="num">${won(r.net)}</div></div></div><div class="chart-grid"><div class="card"><h3>지급 항목</h3><table class="table nowrap-table"><tr><th>항목</th><th>금액</th></tr>${detailRows(payRows)}</table></div><div class="card"><h3>공제 항목</h3><table class="table nowrap-table"><tr><th>항목</th><th>금액</th></tr>${detailRows(dedRows)}</table></div></div>`;
+    if(body) body.innerHTML=`<div class="payroll-v165-note">V.1.7.8 기준으로 국민연금·건강보험·고용보험 alias 필드를 통합해 표시합니다.</div><div class="pay-summary-row"><div class="kpi"><div class="label">총 지급액</div><div class="num">${won(r.gross)}</div></div><div class="kpi"><div class="label">총 공제액</div><div class="num">${won(r.deduct)}</div></div><div class="kpi"><div class="label">실 지급액</div><div class="num">${won(r.net)}</div></div></div><div class="chart-grid"><div class="card"><h3>지급 항목</h3><table class="table nowrap-table"><tr><th>항목</th><th>금액</th></tr>${detailRows(payRows)}</table></div><div class="card"><h3>공제 항목</h3><table class="table nowrap-table"><tr><th>항목</th><th>금액</th></tr>${detailRows(dedRows)}</table></div></div>`;
     if(modal) modal.style.display='flex';
   }
   function selectPayStatus(no,kind='regular'){
@@ -14635,7 +14954,7 @@ window.__HR_ERP_V176_AUDIT__ = {
 </style>
 
 <script id="erp-stabilize-v166">
-/* ===== V.1.7.6 전체 구조 안정화 패치 =====
+/* ===== V.1.7.8 전체 구조 안정화 패치 =====
    목적:
    1. 중복 패치로 인해 같은 기능이 서로 다른 필드명을 참조하는 문제 정리
    2. 급여정산, 급여지급내역, 퇴사자 정산이 동일한 payrollHistory 표준 필드를 참조하도록 정규화
@@ -14646,7 +14965,7 @@ window.__HR_ERP_V176_AUDIT__ = {
 (function(){
   'use strict';
 
-  const PATCH_VERSION = 'V.1.7.6';
+  const PATCH_VERSION = 'V.1.7.8';
   const AUDIT = {
     version: PATCH_VERSION,
     createdAt: new Date().toISOString(),
@@ -14845,7 +15164,7 @@ window.__HR_ERP_V176_AUDIT__ = {
       if(typeof saveEmployees === 'function' && saveEmployees !== W.saveEmployees) return saveEmployees.apply(this, arguments);
       localStorage.setItem('hypo_hr_erp_employees_v001', JSON.stringify(employeeList()));
     } catch(e) {
-      console.warn('[V.1.7.6] saveEmployees 보정 저장 실패', e);
+      console.warn('[V.1.7.8] saveEmployees 보정 저장 실패', e);
       try { localStorage.setItem('hypo_hr_erp_employees_v001', JSON.stringify(employeeList())); } catch(_) {}
     }
   }
@@ -14899,7 +15218,7 @@ window.__HR_ERP_V176_AUDIT__ = {
 
     const rows = buildPayrollHistoryV166(emp);
     area.innerHTML = `<div class="status-header">${esc(emp.name)} 지급 현황 <span class="muted">${esc(emp.type)} / ${esc(emp.status || '')}</span></div>
-      <div class="erp-v166-note">V.1.7.6 기준: 급여지급내역은 pension/nationalPension, health/healthInsurance/insurance 필드를 통합 정규화하여 조회합니다.</div>
+      <div class="erp-v166-note">V.1.7.8 기준: 급여지급내역은 pension/nationalPension, health/healthInsurance/insurance 필드를 통합 정규화하여 조회합니다.</div>
       <table class="table nowrap-table">
         <tr><th>귀속년</th><th>귀속월</th><th>총 지급액</th><th>총 공제액</th><th>실 지급액</th></tr>
         ${rows.map((r,i) => {
@@ -14956,9 +15275,9 @@ window.__HR_ERP_V176_AUDIT__ = {
         normalizeAllPayrollV166();
         if(typeof W.__saveEmployeesBeforeV166 === 'function') W.__saveEmployeesBeforeV166();
         else localStorage.setItem('hypo_hr_erp_employees_v001', JSON.stringify(employeeList()));
-        console.info('[V.1.7.6] payroll normalized after', label);
+        console.info('[V.1.7.8] payroll normalized after', label);
       } catch(e) {
-        console.warn('[V.1.7.6] normalizeAfterAction 실패:', label, e);
+        console.warn('[V.1.7.8] normalizeAfterAction 실패:', label, e);
       }
     }, 80);
   }
@@ -15005,7 +15324,7 @@ window.__HR_ERP_V176_AUDIT__ = {
     try {
       if(typeof prevPageBody === 'function') return prevPageBody.apply(this, arguments);
     } catch(e) {
-      console.error('[V.1.7.6] pageBody 오류 보호:', id, e);
+      console.error('[V.1.7.8] pageBody 오류 보호:', id, e);
       return `<div class="card"><h3>${esc(title || id)}</h3><div class="work-box">화면 렌더링 중 오류가 발생했습니다.<br>${esc(e.message || e)}</div></div>`;
     }
     return `<div class="card"><h3>${esc(title || id)}</h3><div class="work-box">해당 메뉴는 아직 연결되지 않았습니다.</div></div>`;
@@ -15044,13 +15363,13 @@ window.__HR_ERP_V176_AUDIT__ = {
 
 
 <script id="erp-payroll-stabilize-v167">
-/* ===== V.1.7.6 급여지급내역 화면 복구 및 급여정산 재계산 루프 차단 =====
+/* ===== V.1.7.8 급여지급내역 화면 복구 및 급여정산 재계산 루프 차단 =====
    V.1.6.6 결과:
    - 퇴사자 정산 기납부 보험료는 정상화됨
    - 다만 급여지급내역 화면이 기존 라우팅/DOM 구조와 충돌하여 목록이 표시되지 않음
    - 급여정산에서 세액/보험료 자동계산 함수가 여러 번 중첩되어 소득세·지방소득세·고용보험 값이 반복 변경됨
 
-   V.1.7.6 보정:
+   V.1.7.8 보정:
    1. payEmployeeStatusPage / PAY_EMPLOYEE_STATUS 화면을 독립 안정 렌더러로 고정
    2. payContractorStatusPage도 최소 조회 가능 상태로 복구
    3. 급여정산 입력값은 사용자가 입력/업로드한 값 우선 보존
@@ -15060,7 +15379,7 @@ window.__HR_ERP_V176_AUDIT__ = {
 (function(){
   'use strict';
 
-  const PATCH_VERSION = 'V.1.7.6';
+  const PATCH_VERSION = 'V.1.7.8';
   const W = window;
 
   function $(id){ return document.getElementById(id); }
@@ -15285,7 +15604,7 @@ window.__HR_ERP_V176_AUDIT__ = {
           </tr>`;
         }).join('') || `<tr><td colspan="5" style="text-align:center;color:var(--muted)">조회 가능한 급여지급내역이 없습니다.</td></tr>`}
       </table>
-      <div class="footer-note">V.1.7.6: 급여지급내역 화면은 독립 렌더러로 복구했습니다.</div>`;
+      <div class="footer-note">V.1.7.8: 급여지급내역 화면은 독립 렌더러로 복구했습니다.</div>`;
   }
 
   function openPayDetailModal(no, idx){
@@ -15375,7 +15694,7 @@ window.__HR_ERP_V176_AUDIT__ = {
     try {
       if(typeof prevPageBody === 'function') return prevPageBody.apply(this, arguments);
     } catch(e) {
-      console.error('[V.1.7.6] pageBody 보호:', id, e);
+      console.error('[V.1.7.8] pageBody 보호:', id, e);
       return `<div class="card"><h3>${esc(title || id)}</h3><div class="work-box">화면 렌더링 중 오류가 발생했습니다.<br>${esc(e.message || e)}</div></div>`;
     }
     return `<div class="card"><h3>${esc(title || id)}</h3><div class="work-box">해당 메뉴는 아직 연결되지 않았습니다.</div></div>`;
