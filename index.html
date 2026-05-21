@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
-  <title>히포케이메논 인사 ERP V.1.6.9</title>
+  <title>히포케이메논 인사 ERP V.1.7.6</title>
   <link rel="icon" href="data:,">
   <style>
     :root{
@@ -107,7 +107,7 @@ body{font-size:11px !important;}
   <div id="loginPage" class="login-wrap">
     <div class="login-card">
       <h1>히포케이메논 인사 ERP</h1>
-      <div class="sub">V.1.6.9 · IndexedDB 테스트 저장모드</div>
+      <div class="sub">V.1.7.6 · IndexedDB 테스트 저장모드</div>
       <div class="field"><label for="loginId">ID</label><input id="loginId" value="admin" autocomplete="username"></div>
       <div class="field"><label for="loginPw">Password</label><input id="loginPw" type="password" value="admin" autocomplete="current-password"></div>
       <button class="btn primary" style="width:100%" onclick="login()">로그인</button>
@@ -118,7 +118,7 @@ body{font-size:11px !important;}
 
   <div id="app" class="app hidden">
     <aside id="sidebar" class="sidebar">
-      <div class="brand"><div class="brand-mark">H</div><div class="brand-text"><strong>HR ERP</strong><span>V.1.6.9</span></div><button class="toggle" onclick="toggleSidebar()">☰</button></div>
+      <div class="brand"><div class="brand-mark">H</div><div class="brand-text"><strong>HR ERP</strong><span>V.1.7.6</span></div><button class="toggle" onclick="toggleSidebar()">☰</button></div>
       <nav id="menu" class="menu"></nav>
     </aside>
     <main class="main">
@@ -139,7 +139,7 @@ body{font-size:11px !important;}
   <div id="toast" class="toast"></div>
 
 <script>
-const VERSION = 'V.1.6.9';
+const VERSION = 'V.1.7.6';
 const defaultSites = [
   {name:'하이웍스', url:'#'}, {name:'HR시프트', url:'#'}, {name:'나인하이어', url:'#'}, {name:'에스원', url:'#'}
 ];
@@ -173,7 +173,7 @@ const menuTree = [
   {id:'PAYROLL', title:'임금', icon:'₩', children:[
     {id:'REGULAR_PAY_G', title:'정규근로자 임금', children:[{id:'PAYROLL_CLOSE', title:'급여정산', page:true, children:[{id:'OVERTIME_PAY', title:'초과근로', page:true},{id:'INCENTIVE_PAY', title:'인센티브/기타수당', page:true},{id:'ANNUAL_PAY', title:'연차수당', page:true}]}]},
     {id:'FEE_G', title:'사업자/프리랜서 수당', children:[{id:'BIZ_FEE', title:'사업자 수당', page:true}, {id:'FREE_FEE', title:'프리랜서 수당', page:true}]},
-    {id:'SME_TAX_G', title:'중소기업감면 신청', children:[{id:'SME_TAX_STATUS', title:'신청 현황', page:true}]}
+    {id:'SME_TAX_G', title:'중소기업감면 신청', children:[{id:'SME_TAX_STATUS', title:'신청 현황', page:true}, {id:'SME_TAX_HISTORY', title:'감면내역 조회', page:true}]}
   ]},
   {id:'SUPPORT', title:'정부지원금', icon:'□', children:[
     {id:'YOUTH_JOB', title:'청년일자리도약장려금', page:true}, {id:'SUPPORT_PARENTAL', title:'육아휴직', page:true}, {id:'SUPPORT_SHORT', title:'육아기/임신기 단축근로', page:true}, {id:'SUPPORT_SPOUSE', title:'배우자출산휴가', page:true}
@@ -343,7 +343,7 @@ function kpiFinalScore(a,b,ar,br){const x=Number(a||0), y=Number(b||0); if(!x&&!
 function updateKpiScorePreview(){const fs=kpiFinalScore(document.getElementById('ke_deptScore')?.value,document.getElementById('ke_personalScore')?.value,document.getElementById('ke_deptRatio')?.value,document.getElementById('ke_personalRatio')?.value); const el=document.getElementById('ke_finalScore'); if(el)el.value=fs;}
 function syncKpiRatio(which){const d=document.getElementById('ke_deptRatio'), p=document.getElementById('ke_personalRatio'); if(!d||!p)return; const v=Math.max(0,Math.min(100,Number((which==='dept'?d:p).value||0))); if(which==='dept'){d.value=v;p.value=100-v;}else{p.value=v;d.value=100-v;} updateKpiScorePreview();}
 function saveKpiEval(no){const e=sampleEmployees.find(x=>x.no===no); if(!e)return; const rec=ensureEvalRecords(e); rec.final={deptGrade:document.getElementById('ke_deptGrade')?.value||'', deptScore:document.getElementById('ke_deptScore')?.value||'', personalGrade:document.getElementById('ke_personalGrade')?.value||'', personalScore:document.getElementById('ke_personalScore')?.value||'', deptRatio:document.getElementById('ke_deptRatio')?.value||50, personalRatio:document.getElementById('ke_personalRatio')?.value||50, finalScore:document.getElementById('ke_finalScore')?.value||'', finalGrade:document.getElementById('ke_finalGrade')?.value||''}; saveEmployees(); showToast('KPI평가 내역이 저장되었습니다.'); selectKpiEval(no);}
-function pageBody(id,title){const custom={HOME:homePage,EMP_SEARCH:employeeSearchPage,EMP_REGISTER:employeeRegisterPage,COMPANY_INFO:companyInfoPageV048,ACCOUNT:accountPage,SITE:sitePage,LOG:logPage,ORG_CHART:orgChartPage,HEADCOUNT_YEAR:headcountYearPage,HEADCOUNT_CHANGE:headcountChangePage,ATTEND_DAILY:dailyAttendancePage,ATTEND_WRITE:attendanceStatusPage,PAYROLL_CLOSE:payrollPage,OVERTIME_PAY:overtimePayPage,INCENTIVE_PAY:incentiveEtcPayPage,ANNUAL_PAY:annualPayPage,BULK_UPLOAD:uploadPage,BACKUP:backupPage,ORG_SETTING:orgSettingPage,CONTRACT_SETTING:contractSettingPage,POSITION_SETTING:positionSettingPage,HR_ORDER:hrOrderPage,SALARY_CALC:salaryCalcPage,SME_TAX_STATUS:smeTaxPage,PARENTAL:leaveParentPage,SICK_LEAVE:leaveSickPage,IP_SETTING:ipSettingPage,PAY_EMPLOYEE_STATUS:payEmployeeStatusPage,PAY_CONTRACTOR_STATUS:payContractorStatusPage,PROBATION_EVAL:probationEvalPage,KPI_EVAL:kpiEvalPage}; return (custom[id]||workingPage)(id,title)}
+function pageBody(id,title){const custom={HOME:homePage,EMP_SEARCH:employeeSearchPage,EMP_REGISTER:employeeRegisterPage,COMPANY_INFO:companyInfoPageV048,ACCOUNT:accountPage,SITE:sitePage,LOG:logPage,ORG_CHART:orgChartPage,HEADCOUNT_YEAR:headcountYearPage,HEADCOUNT_CHANGE:headcountChangePage,ATTEND_DAILY:dailyAttendancePage,ATTEND_WRITE:attendanceStatusPage,PAYROLL_CLOSE:payrollPage,OVERTIME_PAY:overtimePayPage,INCENTIVE_PAY:incentiveEtcPayPage,ANNUAL_PAY:annualPayPage,BULK_UPLOAD:uploadPage,BACKUP:backupPage,ORG_SETTING:orgSettingPage,CONTRACT_SETTING:contractSettingPage,POSITION_SETTING:positionSettingPage,HR_ORDER:hrOrderPage,SALARY_CALC:salaryCalcPage,SME_TAX_STATUS:smeTaxPage,SME_TAX_HISTORY:smeTaxDetailPage,SME_TAX_HISTORY:smeTaxDetailPage,PARENTAL:leaveParentPage,SICK_LEAVE:leaveSickPage,IP_SETTING:ipSettingPage,PAY_EMPLOYEE_STATUS:payEmployeeStatusPage,PAY_CONTRACTOR_STATUS:payContractorStatusPage,PROBATION_EVAL:probationEvalPage,KPI_EVAL:kpiEvalPage}; return (custom[id]||workingPage)(id,title)}
 function getCurrentMonth(){const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`}
 function sameMonth(dateStr, month=getCurrentMonth()){return !!dateStr && dateStr.slice(0,7)===month}
 function positionText(e){return e.duty ? e.duty : e.pos}
@@ -495,7 +495,7 @@ function renderDailyAttendanceData(){
   const statusCount=activeRows.reduce((acc,e)=>{const st=saved[e.no]?.status||'출근';acc[st]=(acc[st]||0)+1;return acc;},{});
   const listRows=activeRows.map(e=>{const r=saved[e.no]||{};return `<tr><td>${escapeHtml(e.type)}</td><td>${escapeHtml(e.dept)}</td><td>${escapeHtml(e.name)}</td><td>${escapeHtml(positionText(e))}</td><td>${escapeHtml(e.hireDate||'-')}</td><td>${escapeHtml(e.resignDate||'')}</td><td>${escapeHtml(r.status||'출근')}</td><td>${escapeHtml(r.startTime||'-')}</td><td>${escapeHtml(r.memo||'')}</td></tr>`}).join('') || `<tr><td colspan="9" style="text-align:center;color:var(--muted)">기준일 재적 인원이 없습니다.</td></tr>`;
   const el=document.getElementById('dailyAttendanceContent'); if(!el)return;
-  el.innerHTML=`<div class="report-summary-grid"><div class="report-summary-card"><div class="label">재적</div><div class="value">${total}명</div></div><div class="report-summary-card"><div class="label">근로자</div><div class="value">${worker}명</div></div><div class="report-summary-card"><div class="label">사업자/프리랜서</div><div class="value">${partner}명</div></div><div class="report-summary-card"><div class="label">출근</div><div class="value">${statusCount['출근']||0}명</div></div></div><h3>1. 부서별 근태 현황</h3><div class="hr-scroll"><table class="report-table-solid" style="min-width:1180px"><tr><th style="width:120px">부서명</th><th style="width:60px">재적</th><th>출근</th><th>지각</th><th>연차</th><th>반차</th><th>반반차</th><th>휴가</th><th>결근</th><th>조퇴</th><th>재택근무</th><th>입사</th><th>퇴직</th><th>기타</th><th>휴직</th></tr>${buildAttendanceReportRows(activeRows,saved)}</table></div><h3 style="margin-top:18px">2. 개인별 근태 상세</h3><div class="hr-scroll"><table class="report-table-solid" style="min-width:1050px"><tr><th>계약형태</th><th>부서명</th><th>이름</th><th>직위/직책</th><th>입사일</th><th>퇴직일</th><th>근태상태</th><th>출근시각</th><th>사유/비고</th></tr>${listRows}</table></div>`;
+  el.innerHTML=`<div class="report-summary-grid"><div class="report-summary-card"><div class="label">재적</div><div class="value">${total}명</div></div><div class="report-summary-card"><div class="label">근로자</div><div class="value">${worker}명</div></div><div class="report-summary-card"><div class="label">사업자/프리랜서</div><div class="value">${partner}명</div></div><div class="report-summary-card"><div class="label">출근</div><div class="value">${statusCount['출근']||0}명</div></div></div><h3>1. 부서별 근태 현황</h3><div class="hr-scroll"><table class="report-table-solid" style="min-width:1380px"><tr><th style="width:120px">부서명</th><th style="width:60px">재적</th><th>출근</th><th>지각</th><th>연차</th><th>반차</th><th>반반차</th><th>휴가</th><th>결근</th><th>조퇴</th><th>재택근무</th><th>입사</th><th>퇴직</th><th>기타</th><th>휴직</th></tr>${buildAttendanceReportRows(activeRows,saved)}</table></div><h3 style="margin-top:18px">2. 개인별 근태 상세</h3><div class="hr-scroll"><table class="report-table-solid" style="min-width:1050px"><tr><th>계약형태</th><th>부서명</th><th>이름</th><th>직위/직책</th><th>입사일</th><th>퇴직일</th><th>근태상태</th><th>출근시각</th><th>사유/비고</th></tr>${listRows}</table></div>`;
 }
 function attendanceStatusPage(){
   const today=new Date().toISOString().slice(0,10);
@@ -573,6 +573,45 @@ function updateSalaryCalcPreview(){const gross=['salCalcBase','salCalcMeal','sal
 function saveSalaryCalc(no){const e=sampleEmployees.find(x=>x.no===no);if(!e)return;const base=Number(digitsOnly(document.getElementById('salCalcBase').value)||0),meal=Number(digitsOnly(document.getElementById('salCalcMeal').value)||0),fixed=Number(digitsOnly(document.getElementById('salCalcFixed').value)||0),etc=Number(digitsOnly(document.getElementById('salCalcEtc').value)||0);const monthPay=base+meal+fixed+etc;const h={id:`SAL_${Date.now()}`,date:document.getElementById('salCalcDate').value,reason:document.getElementById('salCalcReason').value,base,meal,fixedOver:fixed,etc,monthPay,annual:monthPay*12};(e.salaryHistory||(e.salaryHistory=[])).push(h);saveEmployees();logAction('SALARY_CALC','임금 갱신 저장',`${e.no} ${e.name} / ${money(monthPay)}`,'info');toast('임금 갱신이 저장되었습니다.');selectSalaryCalc(no)}
 function smeTaxPage(){const rows=sortEmployees(sampleEmployees.filter(e=>['임원','정규직','계약직'].includes(e.type))).map(e=>`<tr><td>${escapeHtml(e.no)}</td><td>${escapeHtml(e.name)}</td><td>${escapeHtml(e.dept)}</td><td>${escapeHtml(e.smeTax?.yn?'대상':'미대상')}</td><td>${escapeHtml(e.smeTax?.period||'-')}</td><td><button class="btn small" onclick="toggleSmeTax('${escapeAttr(e.no)}')">점검/저장</button></td></tr>`).join('');return `<div class="card"><h3>중소기업소득세감면 신청 현황</h3><table class="table nowrap-table"><tr><th>사번</th><th>이름</th><th>부서</th><th>판정</th><th>감면기간</th><th>관리</th></tr>${rows}</table><div class="footer-note">현재는 대상 여부와 감면기간 저장 구조를 먼저 반영했습니다. 세부 요건 체크리스트는 다음 단계에서 확장 가능합니다.</div></div>`}
 function toggleSmeTax(no){const e=sampleEmployees.find(x=>x.no===no);if(!e)return;const yn=confirm(`${e.name}님을 감면 대상으로 저장하시겠습니까?`);e.smeTax={yn,period:yn?`${new Date().toISOString().slice(0,7)} ~ 자동산정 예정`:'-'};saveEmployees();logAction('SME_TAX','감면대상 저장',`${e.no} ${e.name} / ${yn?'대상':'미대상'}`,'info');renderPage('SME_TAX_STATUS')}
+
+function smeTaxDetailPage(){
+  const rows = sortEmployees(sampleEmployees.filter(e=>['임원','정규직','계약직'].includes(e.type))).map(e=>{
+    const app = e.smeTaxApplication || {};
+    const tax = e.smeTax || {};
+    const yn = tax.yn || app.yn || false;
+    const start = app.startYm || app.startMonth || app.start || '';
+    const end = app.endYm || app.endMonth || app.end || '';
+    const type = app.type || tax.type || '';
+    const status = yn ? '대상' : '미대상';
+    return `<tr>
+      <td>${escapeHtml(e.no||'')}</td>
+      <td>${escapeHtml(e.name||'')}</td>
+      <td>${escapeHtml(e.dept||'')}</td>
+      <td>${escapeHtml(e.type||'')}</td>
+      <td>${escapeHtml(status)}</td>
+      <td>${escapeHtml(type||'-')}</td>
+      <td>${escapeHtml(start||'-')}</td>
+      <td>${escapeHtml(end||tax.period||'-')}</td>
+    </tr>`;
+  }).join('') || `<tr><td colspan="8" style="text-align:center;color:var(--muted)">조회 가능한 감면내역이 없습니다.</td></tr>`;
+
+  return `<div class="card">
+    <h3>중소기업감면 신청 &gt; 감면내역 조회</h3>
+    <div class="toolbar">
+      <strong>조회 기준</strong>
+      <button class="btn primary" onclick="renderPage('SME_TAX_HISTORY')">조회</button>
+      <button class="btn ghost" onclick="renderPage('SME_TAX_STATUS')">신청 현황으로 이동</button>
+    </div>
+    <div class="hr-scroll">
+      <table class="table nowrap-table" style="min-width:980px">
+        <tr><th>사번</th><th>이름</th><th>부서</th><th>고용형태</th><th>감면여부</th><th>감면유형</th><th>감면 시작</th><th>감면 종료/기간</th></tr>
+        ${rows}
+      </table>
+    </div>
+    <div class="footer-note">사원 등록/수정의 공제등록 및 중소기업감면 신청 현황에 저장된 값을 조회용으로 표시합니다.</div>
+  </div>`;
+}
+
 function leaveEmployeeOptions(){return sortEmployees(sampleEmployees.filter(e=>['임원','정규직','계약직'].includes(e.type)&&employeeStatus(e)==='재직')).map(e=>`<option value="${escapeAttr(e.no)}">${escapeHtml(e.name)} (${escapeHtml(e.no)})</option>`).join('')}
 function leaveParentPage(){return `<div class="card"><h3>휴직/단축근로 관리 &gt; 육아/출산</h3><div class="form-section"><h3>등록</h3><div class="form-grid-4"><div class="field"><label>이름</label><select id="leaveParentNo">${leaveEmployeeOptions()}</select></div><div class="field"><label>사유</label><select id="leaveParentReason" onchange="handleLeaveReasonChange()"><option>육아휴직</option><option>임신기 단축근로</option><option>육아기 단축근로</option><option>출산휴가</option></select></div><div class="field"><label>자녀명</label><input id="leaveChildName"></div><div class="field"><label id="leaveChildBirthLabel">자녀생년월일</label><input id="leaveChildBirth" type="date"></div><div class="field"><label>시작일</label><input id="leaveParentStart" type="date" onchange="updateLeaveReturnPreview('parent')"></div><div class="field"><label>종료일</label><input id="leaveParentEnd" type="date" onchange="updateLeaveReturnPreview('parent')"></div><div class="field"><label>복귀일</label><input id="leaveParentReturn" type="date"></div><div class="field"><label>잔여/사용일</label><input id="leaveParentRemain" readonly></div></div><div id="leaveParentExtra" class="leave-extra-box"><div class="form-grid-4"><div class="field"><label>출산 전 신청</label><select id="leavePreBirthYn" onchange="handleLeaveReasonChange()"><option value="N">해당사항 없음</option><option value="Y">해당</option></select></div><div class="field"><label>배우자 육아휴직 사용</label><select id="leaveSpouseYn"><option value="N">해당사항 없음</option><option value="Y">해당</option></select></div><div class="field"><label>단축 전 일근로시간</label><input id="leaveBeforeHours" placeholder="8"></div><div class="field"><label>단축 후 일근로시간</label><input id="leaveAfterHours" placeholder="6"></div></div></div><div class="toolbar"><button class="btn success" onclick="saveLeaveRecord('parent')">등록</button><button class="btn ghost" onclick="renderLeaveList('parent')">조회</button></div></div><div id="leaveParentList"></div><script>setTimeout(()=>{handleLeaveReasonChange();renderLeaveList('parent')},0)<\/script></div>`}
 function leaveSickPage(){return `<div class="card"><h3>휴직/단축근로 관리 &gt; 병가</h3><div class="form-section"><h3>등록</h3><div class="form-grid-4"><div class="field"><label>이름</label><select id="leaveSickNo">${leaveEmployeeOptions()}</select></div><div class="field" style="grid-column:span 2"><label>사유</label><input id="leaveSickReason" placeholder="병가 사유"></div><div class="field"><label>시작일</label><input id="leaveSickStart" type="date" onchange="updateLeaveReturnPreview('sick')"></div><div class="field"><label>종료일</label><input id="leaveSickEnd" type="date" onchange="updateLeaveReturnPreview('sick')"></div><div class="field"><label>복귀일</label><input id="leaveSickReturn" type="date"></div><div class="field"><label>사용일</label><input id="leaveSickRemain" readonly></div></div><div class="toolbar"><button class="btn success" onclick="saveLeaveRecord('sick')">등록</button><button class="btn ghost" onclick="renderLeaveList('sick')">조회</button></div></div><div id="leaveSickList"></div><script>setTimeout(()=>renderLeaveList('sick'),0)<\/script></div>`}
@@ -795,7 +834,8 @@ function handleHrSalaryBulkUpload(event){
         {id:'FREE_FEE', title:'프리랜서 수당', page:true}
       ]},
       {id:'SME_TAX_G', title:'중소기업감면 신청', children:[
-        {id:'SME_TAX_STATUS', title:'신청 현황', page:true}
+        {id:'SME_TAX_STATUS', title:'신청 현황', page:true},
+        {id:'SME_TAX_HISTORY', title:'감면내역 조회', page:true}
       ]}
     ]},
     {id:'SUPPORT', title:'정부지원금', icon:'□', children:[
@@ -935,271 +975,6 @@ function handleHrSalaryBulkUpload(event){
     setTimeout(repairIfLoggedIn, 0);
     setTimeout(repairIfLoggedIn, 300);
   });
-})();
-</script>
-
-<script id="erp-payroll-stabilize-v168-early">
-/* ===== V.1.6.9 payroll save/render stability guard =====
-   Scope:
-   1. Keep V094 payroll recalculation display-only during typing.
-   2. Preserve entered/uploaded deduction values after select/render/save wrappers run.
-   3. Recalculate only gross/deduct/net totals from current record fields.
-*/
-(function(){
-  'use strict';
-  const W = window;
-  const PATCH_VERSION = 'V.1.6.9';
-  const EMP_KEY = 'hypo_hr_erp_employees_v001';
-  const $ = id => document.getElementById(id);
-  const n = v => {
-    const x = Number(String(v ?? '').replace(/[^0-9.-]/g, ''));
-    return Number.isFinite(x) ? x : 0;
-  };
-  const won = v => {
-    try { if(typeof W.money === 'function') return W.money(n(v)); } catch(_) {}
-    return `${Math.round(n(v)).toLocaleString('ko-KR')}원`;
-  };
-  const employees = () => Array.isArray(W.sampleEmployees) ? W.sampleEmployees : [];
-  const currentYm = () => $('regularPayYmV094')?.value || $('payrollYm')?.value || new Date().toISOString().slice(0,7);
-  const currentNo = () => W.__payrollSelectedV168 || W.__payrollSelectedV161 || W.__payrollSelectedV140 || W.__payrollSelectedV138 || W.__payrollSelectedV137 || W.__payrollSelectedV128 || W.__payrollSelectedV116 || W.__payrollSelectedV107 || W.__payrollSelectedV106 || W.selectedPayrollNo || document.querySelector('#payrollListV094 tr.selected')?.dataset?.no || '';
-
-  const PAY_GROUPS = [
-    ['base'], ['meal'], ['basicBonus','execBaseBonus'], ['perfBonus','execPerfBonus'], ['longBonus','execLongTerm'],
-    ['car'], ['drive'], ['service','servicePay'], ['rankPay','dutyPay'], ['annualLeave','annual'],
-    ['etc'], ['fixedOver'], ['overtime'], ['retro'], ['incentive'], ['bonus'], ['traffic']
-  ];
-  const DED_GROUPS = [
-    ['incomeTax'], ['localTax'], ['nationalPension','pension','payPension'],
-    ['healthInsurance','health','insurance','payInsurance','payHealth'],
-    ['employmentInsurance','employment','payEmployment'],
-    ['adjIncomeTax'], ['adjLocalTax'], ['healthAdjustment','adjHealth'], ['employmentAdjustment','adjEmployment'],
-    ['yearIncomeTax'], ['yearLocalTax'], ['yearHealth'], ['healthInterest'], ['yearEmployment'], ['studentLoan'], ['etcDeduct']
-  ];
-  const PROTECTED = [...new Set(DED_GROUPS.flat())];
-  const PAY_INPUT_IDS = {
-    base:'payBase', meal:'payMeal', car:'payCar', fixedOver:'payFixed', overtime:'payOvertime',
-    incentive:'payIncentive', etc:'payEtc', annualLeave:'payAnnual', annual:'payAnnual'
-  };
-  const DED_INPUT_IDS = {
-    incomeTax:'payIncomeTax', localTax:'payLocalTax', insurance:'payInsurance',
-    healthInsurance:'payInsurance', health:'payInsurance', etcDeduct:'payEtcDeduct'
-  };
-
-  function firstValue(obj, keys){
-    for(const key of keys){
-      if(Object.prototype.hasOwnProperty.call(obj || {}, key) && obj[key] !== '' && obj[key] != null) return n(obj[key]);
-    }
-    return 0;
-  }
-  function syncAliases(r){
-    if(!r) return r;
-    const pension = firstValue(r, ['nationalPension','pension','payPension']);
-    const health = firstValue(r, ['healthInsurance','health','insurance','payInsurance','payHealth']);
-    const employment = firstValue(r, ['employmentInsurance','employment','payEmployment']);
-    r.nationalPension = r.pension = pension;
-    r.healthInsurance = r.health = r.insurance = health;
-    r.employmentInsurance = r.employment = employment;
-    r.healthAdjustment = r.adjHealth = firstValue(r, ['healthAdjustment','adjHealth']);
-    r.employmentAdjustment = r.adjEmployment = firstValue(r, ['employmentAdjustment','adjEmployment']);
-    r.annualLeave = r.annual = firstValue(r, ['annualLeave','annual']);
-    return r;
-  }
-  function recalcTotals(r){
-    if(!r) return r;
-    syncAliases(r);
-    const gross = PAY_GROUPS.reduce((s, keys) => s + firstValue(r, keys), 0);
-    const deduct = DED_GROUPS.reduce((s, keys) => s + firstValue(r, keys), 0);
-    r.gross = gross;
-    r.deduct = deduct;
-    r.net = gross - deduct;
-    r._stableV168 = true;
-    return r;
-  }
-  function recordFor(no=currentNo(), ym=currentYm()){
-    const emp = employees().find(e => String(e.no) === String(no));
-    const rec = (emp?.payrollHistory || []).find(r => String(r.ym || '') === String(ym));
-    return {emp, rec};
-  }
-  function readDomFields(){
-    const root = $('payrollRightV094') || $('payrollFormArea');
-    if(!root) return null;
-    const out = {};
-    root.querySelectorAll('input[data-pay-key]').forEach(input => {
-      const key = input.dataset.payKey;
-      if(key) out[key] = n(input.value);
-    });
-    Object.entries(PAY_INPUT_IDS).forEach(([key,id]) => { if($(id)) out[key] = n($(id).value); });
-    Object.entries(DED_INPUT_IDS).forEach(([key,id]) => { if($(id)) out[key] = n($(id).value); });
-    return Object.keys(out).length ? out : null;
-  }
-  function updateTotalsFromDom(){
-    const root = $('payrollRightV094') || $('payrollFormArea');
-    if(!root) return {gross:0, deduct:0, net:0};
-    const values = readDomFields() || {};
-    const gross = PAY_GROUPS.reduce((s, keys) => s + firstValue(values, keys), 0);
-    const deduct = DED_GROUPS.reduce((s, keys) => s + firstValue(values, keys), 0);
-    const taxable = PAY_GROUPS
-      .filter(keys => !keys.includes('meal') && !keys.includes('drive'))
-      .reduce((s, keys) => s + firstValue(values, keys), 0);
-    const nums = [...root.querySelectorAll('.payroll-v094-summary .num')];
-    if(nums[0]) nums[0].textContent = won(gross);
-    if(nums[1]) nums[1].textContent = won(deduct);
-    if(nums[2]) nums[2].textContent = won(gross - deduct);
-    if(nums[3]) nums[3].textContent = won(taxable);
-    const panels = [...root.querySelectorAll('.payroll-v094-panel')];
-    const payTotals = panels[0] ? [...panels[0].querySelectorAll('.payroll-v094-total-row td:last-child')] : [];
-    const dedTotals = panels[1] ? [...panels[1].querySelectorAll('.payroll-v094-total-row td:last-child')] : [];
-    if(payTotals[0]) payTotals[0].textContent = won(taxable);
-    if(payTotals[1]) payTotals[1].textContent = won(gross);
-    if(dedTotals[0]) dedTotals[0].textContent = won(deduct);
-    if(dedTotals[1]) dedTotals[1].textContent = won(gross - deduct);
-    if($('payGrossView')) $('payGrossView').textContent = won(gross);
-    if($('payDeductView')) $('payDeductView').textContent = won(deduct);
-    if($('payNetView')) $('payNetView').textContent = won(gross - deduct);
-    return {gross, deduct, net:gross-deduct};
-  }
-  function writeDomFields(r){
-    if(!r) return;
-    syncAliases(r);
-    Object.keys(r).forEach(key => {
-      const el = $('payrollV094_' + key);
-      if(el) el.value = won(r[key]);
-    });
-    const set = (id, value) => { const el = $(id); if(el) el.value = won(value); };
-    set('payIncomeTax', r.incomeTax);
-    set('payLocalTax', r.localTax);
-    set('payInsurance', firstValue(r, ['insurance','healthInsurance','health']));
-    set('payEtcDeduct', r.etcDeduct);
-    updateTotalsFromDom();
-  }
-  function snapshotMonth(ym=currentYm()){
-    const map = new Map();
-    employees().forEach(emp => (emp.payrollHistory || []).forEach(rec => {
-      if(String(rec.ym || '') !== String(ym)) return;
-      const protectedValues = {};
-      PROTECTED.forEach(key => {
-        if(Object.prototype.hasOwnProperty.call(rec, key) && rec[key] !== '' && rec[key] != null) protectedValues[key] = n(rec[key]);
-      });
-      map.set(`${emp.no}|${ym}`, protectedValues);
-    }));
-    return map;
-  }
-  function restoreSnapshot(map, ym=currentYm(), skipNo=''){
-    if(!(map instanceof Map)) return;
-    employees().forEach(emp => {
-      if(skipNo && String(emp.no) === String(skipNo)) return;
-      const rec = (emp.payrollHistory || []).find(r => String(r.ym || '') === String(ym));
-      const vals = map.get(`${emp.no}|${ym}`);
-      if(!rec || !vals) return;
-      Object.assign(rec, vals);
-      recalcTotals(rec);
-    });
-  }
-  function persist(){
-    try {
-      if(typeof W.saveEmployees === 'function') W.saveEmployees();
-      else localStorage.setItem(EMP_KEY, JSON.stringify(employees()));
-    } catch(e) {
-      try { localStorage.setItem(EMP_KEY, JSON.stringify(employees())); } catch(_) {}
-    }
-  }
-  function applyDomToRecord(no=currentNo(), ym=currentYm()){
-    const dom = readDomFields();
-    if(!dom) return false;
-    const {rec} = recordFor(no, ym);
-    if(!rec) return false;
-    Object.assign(rec, dom);
-    recalcTotals(rec);
-    writeDomFields(rec);
-    return true;
-  }
-  function delayedRestore(map, ym, no, dom){
-    [0, 80, 180, 380, 720].forEach(ms => setTimeout(() => {
-      restoreSnapshot(map, ym, no);
-      if(dom){
-        const {rec} = recordFor(no, ym);
-        if(rec){
-          Object.assign(rec, dom);
-          recalcTotals(rec);
-          writeDomFields(rec);
-        }
-      } else {
-        const {rec} = recordFor(no, ym);
-        if(rec) writeDomFields(recalcTotals(rec));
-      }
-      persist();
-    }, ms));
-  }
-  function recalcDisplayOnly(){
-    applyDomToRecord(currentNo(), currentYm());
-    updateTotalsFromDom();
-    return false;
-  }
-  function wrapPayrollEntrypoints(){
-    if(typeof W.payrollV094RecalcCurrent === 'function' && !W.payrollV094RecalcCurrent.__v168DisplayOnly){
-      W.__payrollV168PrevRecalcCurrent = W.payrollV094RecalcCurrent;
-      const fn = function(){ return recalcDisplayOnly(); };
-      fn.__v168DisplayOnly = true;
-      W.payrollV094RecalcCurrent = fn;
-    }
-    const wrap = (name, mode) => {
-      const prev = W[name];
-      if(typeof prev !== 'function' || prev.__v168StableGuard) return;
-      const fn = function(){
-        if(name === 'payrollV094SelectEmp' || name === 'selectPayrollEmployee') W.__payrollSelectedV168 = arguments[0];
-        const ym = currentYm();
-        const no = name === 'payrollV094SelectEmp' || name === 'selectPayrollEmployee' ? arguments[0] : currentNo();
-        const before = snapshotMonth(ym);
-        const dom = mode === 'save-current' ? readDomFields() : null;
-        const ret = prev.apply(this, arguments);
-        if(mode === 'save-current') {
-          delayedRestore(before, ym, no, dom);
-        } else if(mode === 'save-all') {
-          delayedRestore(before, ym, currentNo(), readDomFields());
-        } else {
-          delayedRestore(before, ym, no, null);
-        }
-        return ret;
-      };
-      fn.__v168StableGuard = true;
-      W[name] = fn;
-    };
-    wrap('payrollV094SelectEmp', 'select');
-    wrap('selectPayrollEmployee', 'select');
-    wrap('payrollV094RenderList', 'render');
-    wrap('payrollV094SaveCurrent', 'save-current');
-    wrap('payrollV094SaveAll', 'save-all');
-    wrap('savePayrollCurrent', 'save-current');
-  }
-  function applyVersion(){
-    try {
-      W.VERSION = PATCH_VERSION;
-      document.title = 'Hypokeimenon HR ERP ' + PATCH_VERSION;
-      document.querySelectorAll('.brand-text span,.version-pill').forEach(el => { if(el) el.textContent = PATCH_VERSION; });
-      const sub = document.querySelector('.login-card .sub');
-      if(sub) sub.textContent = PATCH_VERSION + ' - payroll save/render stability';
-    } catch(_) {}
-  }
-
-  W.__HR_ERP_V168_AUDIT__ = {
-    version: PATCH_VERSION,
-    changed: [
-      'payrollV094RecalcCurrent display-only override',
-      'payroll save/select/render deduction preservation guard',
-      'payroll record alias and total recalculation stabilization'
-    ]
-  };
-  W.payrollV168RecalcTotals = recalcTotals;
-  W.payrollV168ApplyDomToRecord = applyDomToRecord;
-
-  document.addEventListener('DOMContentLoaded', function(){
-    applyVersion();
-    wrapPayrollEntrypoints();
-  });
-  setTimeout(function(){
-    applyVersion();
-    wrapPayrollEntrypoints();
-  }, 0);
 })();
 </script>
 
@@ -4477,7 +4252,7 @@ function handleHrSalaryBulkUpload(event){
       saveApiTaxModel(model);
       return getTaxSourceV149();
     }catch(err){
-      console.warn('[V.1.6.7] 국가법령정보 API 동기화 실패:',err);
+      console.warn('[V.1.7.6] 국가법령정보 API 동기화 실패:',err);
       if(!loadApiTaxModel()) localStorage.setItem(API_TAX_STATUS_KEY,'fallback');
       updateTaxSyncStatusV149();
       return getTaxSourceV149();
@@ -7428,14 +7203,14 @@ function handleHrSalaryBulkUpload(event){
 </style>
 
 <script id="v155-functions-api-sync">
-/* ===== V.1.6.7 로컬 Firebase Functions API 연동 테스트 =====
+/* ===== V.1.7.6 로컬 Firebase Functions API 연동 테스트 =====
    목적: cors-anywhere 직접 호출 제거, 로컬 Functions Emulator를 통한 법제처 API 호출 검증
    구조: ERP HTML → http://127.0.0.1:5001/.../getSettlementStandards → 법제처 API
 */
 (function(){
   'use strict';
 
-  const VERSION_V155='V.1.6.7';
+  const VERSION_V155='V.1.7.6';
   const API_MODEL_KEY='hypo_tax_api_model_v149';
   const API_SYNCED_AT='hypo_tax_api_synced_at_v149';
   const API_STATUS_KEY='hypo_tax_source_status_v149';
@@ -7443,7 +7218,7 @@ function handleHrSalaryBulkUpload(event){
   const GOV_KEY='hypo_settlement_government_standards_v155';
   const MANUAL_TAX_KEY='hypo_tax_table_model_v096';
 
-  const DEFAULT_FUNCTIONS_URL='https://asia-northeast3-hypokeimenon-erp.cloudfunctions.net/getSettlementStandards';
+  const DEFAULT_FUNCTIONS_URL='http://127.0.0.1:5001/hypokeimenon-erp/asia-northeast3/getSettlementStandards';
 
   const DEFAULT_MODEL={
     source:'fallback',
@@ -7480,7 +7255,7 @@ function handleHrSalaryBulkUpload(event){
   if(typeof window.normalizeUrl!=='function') window.normalizeUrl=function(url){url=String(url||'#').trim(); if(!url||url==='#')return '#'; return /^https?:\/\//i.test(url)?url:'https://'+url;};
 
   function safeJson(key,def=null){try{const raw=localStorage.getItem(key);return raw?JSON.parse(raw):def;}catch(e){return def;}}
-  function saveJson(key,val){try{localStorage.setItem(key,JSON.stringify(val));}catch(e){console.warn('[V.1.6.7] 저장 실패',key,e);}}
+  function saveJson(key,val){try{localStorage.setItem(key,JSON.stringify(val));}catch(e){console.warn('[V.1.7.6] 저장 실패',key,e);}}
   function hasManualTaxTable(){const m=safeJson(MANUAL_TAX_KEY,null);return !!(m&&((Array.isArray(m.rows)&&m.rows.length)||(Array.isArray(m)&&m.length)||(Array.isArray(m.brackets)&&m.brackets.length)));}
   function getFunctionsUrl(){return localStorage.getItem('hypo_functions_api_url_v155') || DEFAULT_FUNCTIONS_URL;}
   function setStatus(kind,text){
@@ -7527,10 +7302,10 @@ function handleHrSalaryBulkUpload(event){
       localStorage.setItem(API_STATUS_KEY,model.okCount===model.totalCount?'api':(model.okCount>0?'partial':'fallback'));
       updateTaxSyncStatusV155();
       if(typeof window.renderSettlementStandardIfVisibleV155==='function') window.renderSettlementStandardIfVisibleV155();
-      if(model.okCount!==model.totalCount) console.warn('[V.1.6.7] 일부 API 동기화 실패/기본값 보완',model.failures||model.sources);
+      if(model.okCount!==model.totalCount) console.warn('[V.1.7.6] 일부 API 동기화 실패/기본값 보완',model.failures||model.sources);
       return model;
     })().catch(err=>{
-      console.warn('[V.1.6.7] 로컬 Functions API 동기화 실패:',err);
+      console.warn('[V.1.7.6] 로컬 Functions API 동기화 실패:',err);
       const existing=safeJson(API_MODEL_KEY,null);
       if(!existing) saveJson(API_MODEL_KEY,DEFAULT_MODEL);
       localStorage.setItem(API_STATUS_KEY,'fallback');
@@ -7656,7 +7431,7 @@ function handleHrSalaryBulkUpload(event){
 
 
 <script id="v157-incentive-storage-hotfix-note">
-/* V.1.6.7: 인센티브/기타수당 업로드 데이터 저장키 불일치 보정
+/* V.1.7.6: 인센티브/기타수당 업로드 데이터 저장키 불일치 보정
    - V.1.5.6 증상: 업로드 건수는 표시되나 하단 표/급여정산 반영 데이터가 비어 있음
    - 원인: 업로드 함수는 hypo_hr_erp_incentive_etc_records_v102_YYYY-MM에 저장, 렌더/저장 함수는 hypo_hr_erp_incentive_etc_records_v102 객체의 [YYYY-MM]을 조회
    - 조치: 업로드 시 두 저장 구조를 모두 기록하되, 실제 렌더/급여정산 기준 구조를 우선 저장
@@ -7685,7 +7460,7 @@ function handleHrSalaryBulkUpload(event){
 </style>
 
 <script id="sme-tax-history-v159-patch">
-/* ===== V.1.6.7 중소기업감면 > 감면내역 조회 산정 로직 보정 =====
+/* ===== V.1.7.6 중소기업감면 > 감면내역 조회 산정 로직 보정 =====
    핵심 변경:
    - 기존: 업로드된 소득세를 원 소득세로 보고 90% 감면액 산정
    - 변경: 과세액 기준 원 소득세를 재계산하고, 업로드된 소득세와의 차액을 실제 감면세액으로 산정
@@ -7694,7 +7469,7 @@ function handleHrSalaryBulkUpload(event){
 (function(){
   'use strict';
 
-  const VERSION_V159 = 'V.1.6.7';
+  const VERSION_V159 = 'V.1.7.6';
   const SME_CAP = 2000000;
   const TAX_KEY = 'hypo_tax_table_model_v096';
   const API_TAX_KEY = 'hypo_tax_api_model_v149';
@@ -8043,7 +7818,7 @@ function handleHrSalaryBulkUpload(event){
 </style>
 
 <script id="sme-upload-v160-patch">
-/* ===== V.1.6.7 급여지급내역 업로드 시점 중소기업감면 산정 저장 패치 =====
+/* ===== V.1.7.6 급여지급내역 업로드 시점 중소기업감면 산정 저장 패치 =====
    핵심:
    1. 급여지급내역 업로드 성공 시점에 원 소득세/공제 소득세/감면세액을 즉시 산정·저장
    2. 감면내역 조회 메뉴는 저장된 결과를 조회 중심으로 표시
@@ -8052,7 +7827,7 @@ function handleHrSalaryBulkUpload(event){
 (function(){
   'use strict';
 
-  const VERSION_V160 = 'V.1.6.7';
+  const VERSION_V160 = 'V.1.7.6';
   const EMP_KEY = 'hypo_hr_erp_employees_v001';
   const PAYROLL_LINK_KEY = 'hypo_hr_erp_payroll_payment_history_link_v026';
   const LAST_UPLOAD_KEY = 'hypo_hr_erp_payroll_bulk_last_v160';
@@ -8075,7 +7850,7 @@ function handleHrSalaryBulkUpload(event){
     try {
       if (typeof window.saveEmployees === 'function') window.saveEmployees();
       else localStorage.setItem(EMP_KEY, JSON.stringify(employees()));
-    } catch(e) { console.warn('[V.1.6.7] save failed', e); }
+    } catch(e) { console.warn('[V.1.7.6] save failed', e); }
   }
   function toastV160(msg){
     try { if (typeof window.toast === 'function') window.toast(msg); else alert(msg); }
@@ -8472,7 +8247,7 @@ function handleHrSalaryBulkUpload(event){
         toastV160('급여지급내역 업로드 및 감면 산정이 완료되었습니다.');
         refreshOpenViews([...affectedYm][0]);
       } catch(err) {
-        console.error('[V.1.6.7] payroll upload failed', err);
+        console.error('[V.1.7.6] payroll upload failed', err);
         if (box) box.innerHTML = `<div class="validation-box error">급여지급내역 업로드 실패<br>${esc(err.message || err)}</div>`;
         logV160('BULK_UPLOAD','급여지급내역 업로드 실패',file.name,'danger');
       } finally {
@@ -8657,47 +8432,260 @@ function handleHrSalaryBulkUpload(event){
 </script>
 
 
-<script id="github-pages-functions-url-v169">
-/* ===== V.1.6.9 GitHub Pages API endpoint guard =====
-   목적:
-   - GitHub Pages 배포 시 Firebase Functions emulator(127.0.0.1/localhost) 주소를 호출하지 않도록 보정
-   - localStorage에 과거 로컬 Functions URL이 남아 있어도 배포 URL을 우선 사용
+<script id="retirement-insurance-monthly-average-v168-patch">
+/* ===== V.1.7.6 퇴사자 건강보험/고용보험 정산 기준 변경 =====
+   - V.1.6.7 기준 안정본에서 재시작
+   - 건강보험/고용보험 결정보험료 산정 기준을 과세보수 총액 직접 적용 방식에서 월평균보수 기준 방식으로 변경
+   - 1~4월 퇴사자 전년도+당해년도 2행 정산 구조는 V.1.6.7과 동일하게 유지
+   - Codex 협업 중 추가된 wrapper/override 안정화 레이어는 반영하지 않음
+*/
+window.__HR_ERP_V168_AUDIT__ = {
+  version: 'V.1.7.6',
+  base: 'hr_erp_V.1.6.7.html',
+  scope: '퇴사자 정산 > 건강보험/고용보험 정산',
+  changed: [
+    'calcInsurance: 건강보험/장기요양 산정월수를 입사일 기준으로 별도 계산',
+    '1일 입사자는 입사월 포함, 2일 이후 입사자는 익월부터 퇴사월까지 산정',
+    '고용보험은 기존 급여지급내역 집계 행수 기준 유지',
+    '1~4월 퇴사자 전년도+당해년도 정산 구조 유지',
+    '건강보험/고용보험 정산 화면에 월평균보수 및 월 보험료 표시 추가'
+  ],
+  notChanged: [
+    '급여지급내역 국민연금/건강보험 반영 로직',
+    '급여정산 공제값 반복 변경 관련 wrapper',
+    '고용보험 적용여부 로직'
+  ]
+};
+</script>
+
+
+<script id="retirement-insurance-rates-v171-patch">
+/* ===== V.1.7.6 퇴사자 정산 연도별 건강보험/장기요양 요율 적용 =====
+   - 2026년 건강보험 전체요율 7.19%, 근로자부담 3.595%
+   - 2026년 장기요양보험료율 소득 대비 0.9448%
+   - 장기요양보험료 = 건강보험료 × (장기요양보험료율 / 건강보험료율)
+   - 기존 V.1.7.0의 실 근무월수/건강보험 산정월수 분리 구조 유지
+*/
+window.__HR_ERP_V171_AUDIT__ = {
+  version: 'V.1.7.6',
+  base: 'hr_erp_V.1.7.0.html',
+  scope: '퇴사자 정산 > 건강보험/장기요양 연도별 요율',
+  changed: [
+    'retirementInsuranceRatesByYear 추가',
+    'calcInsurance에서 currentRates() 대신 정산연도별 건강보험/장기요양 요율 적용',
+    '2026년 건강보험 근로자 부담률 3.595%, 장기요양 소득 대비 0.9448% 반영'
+  ],
+  preserved: [
+    '월평균보수 = 과세보수 / 실 근무월수',
+    '건강보험 산정월수 = 1일 입사자 입사월 포함, 2일 이후 입사자 익월부터',
+    '1~4월 퇴사자 전년도+당해년도 2행 정산 구조'
+  ]
+};
+</script>
+
+
+<script id="retirement-insurance-display-v172-patch">
+/* ===== V.1.7.6 퇴사자 건강보험/고용보험 정산 화면 표시항목 정리 =====
+   - 내부 계산 데이터는 유지
+   - 화면에서는 건강보험 근로자요율, 장기요양 건보대비율, 급여행수, 실 근무월수, 건강보험 산정월수, 고용보험 산정월수 숨김
+   - 실무 확인에 필요한 과세보수, 월평균보수, 월 보험료, 결정/기납부/정산금액 중심으로 표시
+*/
+window.__HR_ERP_V172_AUDIT__ = {
+  version: 'V.1.7.6',
+  base: 'hr_erp_V.1.7.6.html',
+  scope: '퇴사자 정산 > 건강보험/고용보험 정산 화면 표시항목',
+  changed: [
+    '정산 계산 내부 데이터 6개 항목 화면 미노출 처리',
+    '건강보험/고용보험 정산표를 금액 확인 중심으로 재정리'
+  ],
+  preserved: [
+    '연도별 건강보험/장기요양 요율 적용',
+    '월평균보수 = 과세보수 / 실 근무월수',
+    '건강보험 산정월수 계산 로직',
+    '1~4월 퇴사자 전년도+당해년도 2행 정산 구조'
+  ]
+};
+</script>
+
+
+
+
+<script id="employee-register-list-v173-patch">
+/* ===== V.1.7.6 사원 등록/수정 좌측 사원 목록 초기 표시 안정화 =====
+   - 메뉴 진입 직후 regListBody 생성 타이밍과 renderRegisterList 실행 타이밍 불일치 보정
+   - 검색어 입력/삭제 전에도 전체 사원 목록이 즉시 표시되도록 지연 재렌더링
 */
 (function(){
   'use strict';
-  const PATCH_VERSION = 'V.1.6.9';
-  const FUNCTIONS_URL_KEY = 'hypo_functions_api_url_v155';
-  const DEPLOYED_FUNCTIONS_URL = 'https://asia-northeast3-hypokeimenon-erp.cloudfunctions.net/getSettlementStandards';
 
-  function isLocalFunctionsUrl(url){
-    return /^(http:\/\/)?(127\.0\.0\.1|localhost)(:|\/)/.test(String(url || ''));
-  }
-
-  function isGithubPages(){
-    return /^https:\/\/[^/]+\.github\.io$/.test(location.origin);
-  }
-
-  function applyFunctionsUrlGuard(){
+  function ensureRegisterListV173(){
+    const body = document.getElementById('regListBody');
+    if(!body) return;
     try {
-      const saved = localStorage.getItem(FUNCTIONS_URL_KEY);
-      if (isGithubPages() && (!saved || isLocalFunctionsUrl(saved))) {
-        localStorage.setItem(FUNCTIONS_URL_KEY, DEPLOYED_FUNCTIONS_URL);
+      if (typeof window.renderRegisterList === 'function') {
+        window.renderRegisterList();
       }
-      window.HR_ERP_FUNCTIONS_URL_V169 = {
-        version: PATCH_VERSION,
-        currentOrigin: location.origin,
-        deployedFunctionsUrl: DEPLOYED_FUNCTIONS_URL,
-        savedFunctionsUrl: localStorage.getItem(FUNCTIONS_URL_KEY),
-        githubPagesMode: isGithubPages()
-      };
     } catch(e) {
-      console.warn('[V.1.6.9] Functions URL guard failed', e);
+      console.warn('[V.1.7.6] renderRegisterList failed', e);
     }
   }
 
-  applyFunctionsUrlGuard();
-  document.addEventListener('DOMContentLoaded', applyFunctionsUrlGuard);
+  const originalRenderPage = window.renderPage;
+  if (typeof originalRenderPage === 'function' && !window.__renderPageRegisterListPatchedV173__) {
+    window.__renderPageRegisterListPatchedV173__ = true;
+    window.renderPage = function(id){
+      const result = originalRenderPage.apply(this, arguments);
+      if(id === 'EMP_REGISTER'){
+        setTimeout(ensureRegisterListV173, 0);
+        setTimeout(ensureRegisterListV173, 80);
+        setTimeout(ensureRegisterListV173, 250);
+      }
+      return result;
+    };
+  }
+
+  const originalEmployeeRegisterPage = window.employeeRegisterPage;
+  if (typeof originalEmployeeRegisterPage === 'function' && !window.__employeeRegisterPagePatchedV173__) {
+    window.__employeeRegisterPagePatchedV173__ = true;
+    window.employeeRegisterPage = function(){
+      const html = originalEmployeeRegisterPage.apply(this, arguments);
+      setTimeout(ensureRegisterListV173, 0);
+      setTimeout(ensureRegisterListV173, 80);
+      setTimeout(ensureRegisterListV173, 250);
+      return html;
+    };
+  }
+
+  document.addEventListener('DOMContentLoaded', function(){
+    setTimeout(ensureRegisterListV173, 300);
+  });
 })();
+</script>
+
+
+<script id="hr-erp-v173-audit">
+window.__HR_ERP_V173_AUDIT__ = {
+  version: 'V.1.7.6',
+  base: 'V.1.7.2',
+  scope: [
+    '임금 > 정규근로자 임금 하위메뉴 귀속년월 선택 구조 통일',
+    '임금 > 중소기업감면 신청 > 감면내역 조회 메뉴 노출',
+    '사원관리 > 사원 등록/수정 좌측 사원 목록 초기 표시 안정화'
+  ],
+  notChanged: [
+    '퇴사자 건강보험/고용보험 정산 계산 로직',
+    '급여정산 공제값 계산 로직',
+    '급여지급내역 보험료 표시 로직'
+  ]
+};
+</script>
+
+
+<script id="sme-tax-history-routing-v174-patch">
+/* ===== V.1.7.6 중소기업감면 > 감면내역 조회 화면 구조 복구 =====
+   원인:
+   - V.1.7.3에서 메뉴 노출을 위해 SME_TAX_DETAIL ID를 추가했으나,
+     기존에 정상 동작하던 감면내역 조회 화면은 SME_TAX_HISTORY 라우팅에 연결되어 있었음.
+   - 메뉴 ID와 화면 함수 연결 ID가 분리되어 메뉴는 보이나 화면 구조가 정상 렌더링되지 않는 문제가 발생함.
+
+   보정:
+   - 감면내역 조회 메뉴 ID를 기존 정상 라우팅인 SME_TAX_HISTORY로 통일
+   - 혹시 남아 있는 SME_TAX_DETAIL 호출도 SME_TAX_HISTORY로 우회
+   - 기존 smeTaxHistoryPage 계열 화면 구조를 그대로 사용
+*/
+(function(){
+  'use strict';
+
+  const PATCH_VERSION = 'V.1.7.6';
+
+  function getHistoryPage(){
+    if (typeof window.smeTaxHistoryPageV160 === 'function') return window.smeTaxHistoryPageV160();
+    if (typeof window.smeTaxHistoryPageV159 === 'function') return window.smeTaxHistoryPageV159();
+    if (typeof window.smeTaxHistoryPageV107 === 'function') return window.smeTaxHistoryPageV107();
+    if (typeof window.smeTaxHistoryPage === 'function') return window.smeTaxHistoryPage();
+    return null;
+  }
+
+  const prevPageBodyV174 = window.pageBody;
+  window.pageBody = function(id, title){
+    if (id === 'SME_TAX_HISTORY' || id === 'SME_TAX_DETAIL') {
+      const page = getHistoryPage();
+      if (page !== null && page !== undefined) return page;
+    }
+    return typeof prevPageBodyV174 === 'function'
+      ? prevPageBodyV174.apply(this, arguments)
+      : `<div class="card"><div class="work-box">${title || id}</div></div>`;
+  };
+
+  const prevRenderPageV174 = window.renderPage;
+  window.renderPage = function(id){
+    if (id === 'SME_TAX_DETAIL') id = 'SME_TAX_HISTORY';
+    return typeof prevRenderPageV174 === 'function'
+      ? prevRenderPageV174.apply(this, arguments)
+      : undefined;
+  };
+
+  function applyVersion(){
+    try {
+      window.VERSION = PATCH_VERSION;
+      document.title = '히포케이메논 인사 ERP ' + PATCH_VERSION;
+      document.querySelectorAll('.brand-text span,.version-pill').forEach(el => { if(el) el.textContent = PATCH_VERSION; });
+      const sub = document.querySelector('.login-card .sub');
+      if(sub) sub.textContent = PATCH_VERSION + ' · 감면내역 조회 화면 복구';
+    } catch(e) {}
+  }
+
+  document.addEventListener('DOMContentLoaded', function(){
+    applyVersion();
+    setTimeout(applyVersion, 0);
+  });
+  applyVersion();
+
+  window.__HR_ERP_V174_AUDIT__ = {
+    version: PATCH_VERSION,
+    base: 'hr_erp_V.1.7.3.html',
+    scope: '임금 > 중소기업감면 신청 > 감면내역 조회',
+    changed: [
+      '감면내역 조회 메뉴 ID를 기존 정상 라우팅 SME_TAX_HISTORY로 통일',
+      'SME_TAX_DETAIL 호출 시 SME_TAX_HISTORY로 우회',
+      '기존 smeTaxHistoryPage 계열 화면 구조 사용'
+    ],
+    notChanged: [
+      '중소기업감면 신청 현황 로직',
+      '감면세액 계산 로직',
+      '급여정산/급여지급내역 연동 로직',
+      '퇴사자 정산 로직'
+    ]
+  };
+})();
+</script>
+
+
+<script id="payroll-submenus-restore-v176-audit">
+/* ===== V.1.7.6 정규근로자 임금 하위메뉴 화면 구조 복구 =====
+   기준:
+   - V.1.7.5 파일을 기준으로 작업
+   - 초과근로 / 인센티브·기타수당 / 연차수당 메뉴 화면 함수만 V.1.7.2 기준으로 복구
+   - 다른 메뉴와 퇴사자 정산·급여정산 계산 로직은 수정하지 않음
+*/
+window.__HR_ERP_V176_AUDIT__ = {
+  version: 'V.1.7.6',
+  base: 'hr_erp_V.1.7.5.html',
+  restoredFrom: 'hr_erp_V.1.7.2.html',
+  scope: [
+    'OVERTIME_PAY / overtimePayPage',
+    'INCENTIVE_PAY / incentiveEtcPayPage',
+    'ANNUAL_PAY / annualPayPage',
+    'payrollSubPage'
+  ],
+  notChanged: [
+    '급여정산 본 화면',
+    '퇴사자 정산',
+    '중소기업감면 신청/감면내역 조회',
+    '사원 등록/수정',
+    '그 외 메뉴'
+  ]
+};
 </script>
 
 </body>
@@ -11188,9 +11176,9 @@ function handleHrSalaryBulkUpload(event){
   const oldSet = Storage.prototype.setItem;
   const saveNow=(reason)=>{try{ if(window.hypoIndexedDbV123&&typeof window.hypoIndexedDbV123.saveNow==='function') window.hypoIndexedDbV123.saveNow(reason); }catch(e){console.warn('[V.1.2.8 final] IndexedDB save failed',e);}};
   function applyVersion(){
-    try{document.title='히포케이메논 인사 ERP V.1.6.9';}catch(e){}
-    try{document.querySelectorAll('.brand-text span,.version-pill').forEach(el=>{if(el)el.textContent='V.1.6.9';});}catch(e){}
-    try{const sub=document.querySelector('.login-card .sub'); if(sub)sub.textContent='V.1.6.9 · IndexedDB 테스트 저장모드';}catch(e){}
+    try{document.title='히포케이메논 인사 ERP V.1.2.9';}catch(e){}
+    try{document.querySelectorAll('.brand-text span,.version-pill').forEach(el=>{if(el)el.textContent='V.1.7.6';});}catch(e){}
+    try{const sub=document.querySelector('.login-card .sub'); if(sub)sub.textContent='V.1.7.6 · IndexedDB 테스트 저장모드';}catch(e){}
   }
   function install(){
     window.__HYPO_STORAGE_MODE__='indexeddb-test';
@@ -12111,14 +12099,14 @@ function handleHrSalaryBulkUpload(event){
 
 
 <script id="payroll-v140-retiree-tax-priority-final">
-/* ===== V.1.6.7 급여정산 퇴사월 소득세/지방소득세 우선순위 최종 보정 =====
+/* ===== V.1.7.6 급여정산 퇴사월 소득세/지방소득세 우선순위 최종 보정 =====
    - 근로소득 간이세액표 계산보다 퇴사월 0원 처리 규칙을 우선 적용
    - JavaScript의 0 || 자동계산 문제를 ?? 기준으로 보정
    - 화면 렌더링, 재계산, 임금정보 불러오기, 해당 사원 저장, 전체 저장 후에도 0원 유지
 */
 (function(){
   'use strict';
-  const PATCH_VERSION='V.1.6.7';
+  const PATCH_VERSION='V.1.7.6';
   const $=id=>document.getElementById(id);
   const employees=()=>Array.isArray(window.sampleEmployees)?window.sampleEmployees:(Array.isArray(sampleEmployees)?sampleEmployees:[]);
   const num=v=>Number(String(v??'').replace(/[^0-9.-]/g,''))||0;
@@ -12156,7 +12144,7 @@ function handleHrSalaryBulkUpload(event){
 </html>
 
 <script id="v142-internal-rounding-policy">
-/* ===== V.1.6.7 회사 내부 계산 정책 =====
+/* ===== V.1.7.6 회사 내부 계산 정책 =====
    1) 지방소득세: 소득세의 10%를 10원 단위 절사
    2) 초과근로수당: 산출금액을 원 단위 올림 유지
 */
@@ -12186,7 +12174,7 @@ function handleHrSalaryBulkUpload(event){
           }));
           if (typeof window.saveEmployees === 'function') window.saveEmployees();
         }
-      } catch(e) { console.warn('[V.1.6.7] overtime ceil guard failed', e); }
+      } catch(e) { console.warn('[V.1.7.6] overtime ceil guard failed', e); }
       return ret;
     };
     window.overtimeV1000Save.__v142CeilOvertime = true;
@@ -12196,7 +12184,7 @@ function handleHrSalaryBulkUpload(event){
 
 
 <script id="v156-status-and-site-fix">
-/* ===== V.1.6.7 정산기준 상태표시/사이트관리 보정 =====
+/* ===== V.1.7.6 정산기준 상태표시/사이트관리 보정 =====
    - 급여정산 화면 렌더링 후 새로 생성되는 상태 배지가 기존 기본값(빨간색)으로 남는 문제 보정
    - 사이트 관리 메뉴 진입 시 siteRows 미정의로 page registry 오류가 나는 문제 보정
 */
@@ -12205,7 +12193,7 @@ function handleHrSalaryBulkUpload(event){
 
   const API_MODEL_KEY='hypo_tax_api_model_v149';
   const APPLIED_KEY='hypo_settlement_applied_standards_v155';
-  const DEFAULT_FUNCTIONS_URL='https://asia-northeast3-hypokeimenon-erp.cloudfunctions.net/getSettlementStandards';
+  const DEFAULT_FUNCTIONS_URL='http://127.0.0.1:5001/hypokeimenon-erp/asia-northeast3/getSettlementStandards';
 
   function safeJson(key,def){
     try{const raw=localStorage.getItem(key);return raw?JSON.parse(raw):def;}catch(e){return def;}
@@ -12329,7 +12317,7 @@ function handleHrSalaryBulkUpload(event){
 
 
 <script id="storage-continuity-v158-patch">
-/* ===== V.1.6.7 저장 연속성 보강 패치 =====
+/* ===== V.1.7.6 저장 연속성 보강 패치 =====
    목적:
    - 기존 localStorage / IndexedDB 저장키를 유지하여 버전업 후에도 기존 입력 데이터를 그대로 조회
    - 접속 기준 주소가 달라질 경우 브라우저가 다른 저장공간으로 인식할 수 있으므로 경고 표시
@@ -12340,10 +12328,6 @@ function handleHrSalaryBulkUpload(event){
   'use strict';
 
   const EXPECTED_ORIGIN_V158 = 'http://localhost:5500';
-  const ALLOWED_ORIGINS_V169 = ['http://localhost:5500','https://hypo-hr.github.io'];
-  function isAllowedOriginV169(){
-    return ALLOWED_ORIGINS_V169.includes(location.origin) || /^https:\/\/[^/]+\.github\.io$/.test(location.origin);
-  }
   const STORAGE_CONTINUITY_KEYS_V158 = [
     'hypo_hr_erp_employees_v001',
     'hypo_hr_erp_settings_v001',
@@ -12365,7 +12349,7 @@ function handleHrSalaryBulkUpload(event){
     expectedOrigin: EXPECTED_ORIGIN_V158,
     currentOrigin: location.origin,
     storageKeys: STORAGE_CONTINUITY_KEYS_V158.slice(),
-    isExpectedOrigin: isAllowedOriginV169()
+    isExpectedOrigin: location.origin === EXPECTED_ORIGIN_V158
   };
 
   function storageKeyStatusV158(){
@@ -12379,20 +12363,20 @@ function handleHrSalaryBulkUpload(event){
 
   function notifyOriginIfNeededV158(){
     try {
-      console.info('[V.1.6.7 Storage Continuity]', {
+      console.info('[V.1.7.6 Storage Continuity]', {
         expectedOrigin: EXPECTED_ORIGIN_V158,
         currentOrigin: location.origin,
-        sameOrigin: isAllowedOriginV169(),
+        sameOrigin: location.origin === EXPECTED_ORIGIN_V158,
         keys: storageKeyStatusV158()
       });
 
-      if (!isAllowedOriginV169()) {
-        const msg = '현재 접속 주소가 기존 로컬 저장 주소와 다릅니다. 기존 브라우저 저장 데이터가 보이지 않을 수 있습니다.';
+      if (location.origin !== EXPECTED_ORIGIN_V158) {
+        const msg = '저장 데이터 연속 사용을 위해 http://localhost:5500 주소로 접속해주세요.';
         if (typeof toast === 'function') toast(msg);
         else console.warn(msg);
       }
     } catch(e) {
-      console.warn('[V.1.6.7] 저장 연속성 점검 중 오류', e);
+      console.warn('[V.1.7.6] 저장 연속성 점검 중 오류', e);
     }
   }
 
@@ -12439,7 +12423,7 @@ function handleHrSalaryBulkUpload(event){
 </style>
 
 <script id="settlement-tax-table-v161-patch">
-/* ===== V.1.6.7 API 근로소득간이세액표 우선 적용 패치 =====
+/* ===== V.1.7.6 API 근로소득간이세액표 우선 적용 패치 =====
    변경 목적:
    1. 급여정산 월 소득세 계산 기준을 API 간이세액표 1순위로 변경
    2. API 간이세액표 미수신 시 수동 업로드 간이세액표 2순위 적용
@@ -12448,7 +12432,7 @@ function handleHrSalaryBulkUpload(event){
 (function(){
   'use strict';
 
-  const PATCH_VERSION = 'V.1.6.7';
+  const PATCH_VERSION = 'V.1.7.6';
   const EMP_KEY = 'hypo_hr_erp_employees_v001';
   const API_MODEL_KEY = 'hypo_tax_api_model_v149';
   const GOV_KEY = 'hypo_settlement_government_standards_v155';
@@ -12456,7 +12440,7 @@ function handleHrSalaryBulkUpload(event){
   const MANUAL_TAX_KEY = 'hypo_tax_table_model_v096';
   const API_MONTHLY_TAX_KEY = 'hypo_tax_api_monthly_table_v161';
   const FUNCTIONS_URL_KEY = 'hypo_functions_api_url_v155';
-  const DEFAULT_FUNCTIONS_URL = 'https://asia-northeast3-hypokeimenon-erp.cloudfunctions.net/getSettlementStandards';
+  const DEFAULT_FUNCTIONS_URL = 'http://127.0.0.1:5001/hypokeimenon-erp/asia-northeast3/getSettlementStandards';
 
   const $ = id => document.getElementById(id);
   const html = v => String(v ?? '').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
@@ -12487,7 +12471,7 @@ function handleHrSalaryBulkUpload(event){
     try { const raw = localStorage.getItem(key); return raw ? JSON.parse(raw) : def; } catch(e) { return def; }
   }
   function saveJson(key, val){
-    try { localStorage.setItem(key, JSON.stringify(val)); } catch(e) { console.warn('[V.1.6.7] 저장 실패', key, e); }
+    try { localStorage.setItem(key, JSON.stringify(val)); } catch(e) { console.warn('[V.1.7.6] 저장 실패', key, e); }
   }
   function saveEmp(){
     try { if (typeof window.saveEmployees === 'function') window.saveEmployees(); else localStorage.setItem(EMP_KEY, JSON.stringify(employees())); } catch(e) {}
@@ -12719,7 +12703,7 @@ function handleHrSalaryBulkUpload(event){
     const wrapped = function(){
       if (name === 'payrollV094SelectEmp' || name === 'selectPayrollEmployee') window.__payrollSelectedV161 = arguments[0];
       const ret = prev.apply(this, arguments);
-      try { fn.apply(this, arguments); } catch(e) { console.warn('[V.1.6.7] wrapper error', name, e); }
+      try { fn.apply(this, arguments); } catch(e) { console.warn('[V.1.7.6] wrapper error', name, e); }
       return ret;
     };
     wrapped.__v161TaxPriority = true;
@@ -12956,7 +12940,7 @@ function handleHrSalaryBulkUpload(event){
 </style>
 
 <script id="settlement-tax-table-v162-patch">
-/* ===== V.1.6.7 API 근로소득간이세액표 보존·재호출 보정 =====
+/* ===== V.1.7.6 API 근로소득간이세액표 보존·재호출 보정 =====
    보정 사항:
    1. 수동 업로드 간이세액표 존재 여부와 관계없이 로컬 API 동기화 테스트 시 Functions를 반드시 호출
    2. Functions 응답의 monthlyTaxTable을 normalize 과정에서 누락하지 않고 별도 키에 영구 저장
@@ -12966,14 +12950,14 @@ function handleHrSalaryBulkUpload(event){
 (function(){
   'use strict';
 
-  const PATCH_VERSION = 'V.1.6.7';
+  const PATCH_VERSION = 'V.1.7.6';
   const API_MODEL_KEY = 'hypo_tax_api_model_v149';
   const GOV_KEY = 'hypo_settlement_government_standards_v155';
   const APPLIED_KEY = 'hypo_settlement_applied_standards_v155';
   const API_MONTHLY_KEY = 'hypo_tax_api_monthly_table_v161';
   const MANUAL_TAX_KEY = 'hypo_tax_table_model_v096';
   const FUNCTIONS_URL_KEY = 'hypo_functions_api_url_v155';
-  const DEFAULT_FUNCTIONS_URL = 'https://asia-northeast3-hypokeimenon-erp.cloudfunctions.net/getSettlementStandards';
+  const DEFAULT_FUNCTIONS_URL = 'http://127.0.0.1:5001/hypokeimenon-erp/asia-northeast3/getSettlementStandards';
 
   const $ = id => document.getElementById(id);
   const esc = v => String(v ?? '').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
@@ -13006,7 +12990,7 @@ function handleHrSalaryBulkUpload(event){
       localStorage.setItem(key, JSON.stringify(value));
       return true;
     } catch(e) {
-      console.warn('[V.1.6.7] localStorage 저장 실패:', key, e);
+      console.warn('[V.1.7.6] localStorage 저장 실패:', key, e);
       return false;
     }
   }
@@ -13241,7 +13225,7 @@ function handleHrSalaryBulkUpload(event){
 
       updateStatus();
 
-      console.info('[V.1.6.7] API 동기화 완료', {
+      console.info('[V.1.7.6] API 동기화 완료', {
         okCount: model.okCount,
         totalCount: model.totalCount,
         monthlyRows: monthly?.rows?.length || 0,
@@ -13261,7 +13245,7 @@ function handleHrSalaryBulkUpload(event){
 
       return model;
     } catch(e) {
-      console.error('[V.1.6.7] API 동기화 실패', e);
+      console.error('[V.1.7.6] API 동기화 실패', e);
       updateStatus();
       if (typeof toast === 'function') toast('로컬 API 동기화에 실패했습니다. Functions CMD 상태를 확인해주세요.');
       throw e;
@@ -13367,7 +13351,7 @@ function handleHrSalaryBulkUpload(event){
     const manualRows = manualTable?.rows?.length || 0;
     const apiWarning = apiTable?.apiParseFailed
       ? `<div class="settle-v162-error">현재 표시되는 API 간이세액표는 Functions에서 실제 표 파싱에 실패하여 생성한 보조값입니다. 실무 적용 전 수동 업로드표와 금액 검증이 필요합니다.</div>`
-      : (apiRows ? `<div class="settle-v162-guard">API 근로소득간이세액표가 별도 캐시에 보존되어 있습니다. 급여정산 메뉴 작업 후에도 이 데이터가 삭제되지 않도록 V.1.6.7에서 보호했습니다.</div>` : '');
+      : (apiRows ? `<div class="settle-v162-guard">API 근로소득간이세액표가 별도 캐시에 보존되어 있습니다. 급여정산 메뉴 작업 후에도 이 데이터가 삭제되지 않도록 V.1.7.6에서 보호했습니다.</div>` : '');
 
     return `<div class="card">
       <h3>정산 기준</h3>
@@ -13491,7 +13475,7 @@ function handleHrSalaryBulkUpload(event){
 </style>
 
 <script id="retirement-settlement-v163-patch">
-/* ===== V.1.6.7 퇴사자 정산 메뉴/로직 추가 =====
+/* ===== V.1.7.6 퇴사자 정산 메뉴/로직 추가 =====
    반영 사항:
    1. 임금 > 정규근로자 임금 > 퇴사자 정산 메뉴 신설
    2. 중도퇴사 연말정산 / 건강보험·고용보험 정산 / 퇴사자 정산 결과 조회 화면 추가
@@ -13505,7 +13489,7 @@ function handleHrSalaryBulkUpload(event){
 (function(){
   'use strict';
 
-  const PATCH_VERSION = 'V.1.6.7';
+  const PATCH_VERSION = 'V.1.7.6';
   const RESULT_KEY = 'hypo_retirement_settlement_results_v163';
   let selectedRetireNoV163 = '';
 
@@ -13524,7 +13508,7 @@ function handleHrSalaryBulkUpload(event){
     try { return JSON.parse(localStorage.getItem(RESULT_KEY) || '[]') || []; } catch(e){ return []; }
   }
   function writeResults(rows){
-    try { localStorage.setItem(RESULT_KEY, JSON.stringify(rows || [])); } catch(e){ console.warn('[V.1.6.7] 퇴사자 정산 저장 실패', e); }
+    try { localStorage.setItem(RESULT_KEY, JSON.stringify(rows || [])); } catch(e){ console.warn('[V.1.7.6] 퇴사자 정산 저장 실패', e); }
   }
   function saveResult(row){
     const rows = readResults();
@@ -13693,26 +13677,196 @@ function handleHrSalaryBulkUpload(event){
     }, src.insurance || {});
     return ins;
   }
+  function insuranceMonthsByHireResign(e, year){
+    /*
+      V.1.7.6 건강보험/장기요양 산정 기준
+
+      1. 실 근무월수
+      - 월평균보수 계산용
+      - 입사일과 관계없이 입사월부터 퇴사월까지 계산
+
+      2. 건강보험 산정월수
+      - 1일 입사자: 입사월 포함
+      - 2일 이후 입사자: 입사월 제외, 익월부터 계산
+      - 퇴사월 포함
+
+      3. 정산연도 범위 내 월수만 계산
+      4. 1~4월 퇴사자 전년도+당해년도 2행 정산 구조 유지
+    */
+    const y = Number(year);
+    const hire = String(e?.hireDate || '').slice(0,10);
+    const resign = String(e?.resignDate || '').slice(0,10);
+
+    if(!/^\d{4}-\d{2}-\d{2}$/.test(hire)){
+      return {
+        workMonths:0,
+        healthMonths:0
+      };
+    }
+
+    const hireYear = Number(hire.slice(0,4));
+    const hireMonth = Number(hire.slice(5,7));
+    const hireDay = Number(hire.slice(8,10));
+
+    let resignYear = y;
+    let resignMonth = 12;
+
+    if(/^\d{4}-\d{2}-\d{2}$/.test(resign)){
+      resignYear = Number(resign.slice(0,4));
+      resignMonth = Number(resign.slice(5,7));
+    }
+
+    // 실 근무월수
+    const workStartMonth = hireYear < y ? 1 : hireMonth;
+    const workEndMonth = resignYear > y ? 12 : resignMonth;
+
+    const workMonths = workEndMonth >= workStartMonth
+      ? (workEndMonth - workStartMonth + 1)
+      : 0;
+
+    // 건강보험 산정월수
+    let healthStartMonth;
+
+    if(hireYear < y){
+      healthStartMonth = 1;
+    } else {
+      healthStartMonth = hireDay === 1
+        ? hireMonth
+        : hireMonth + 1;
+    }
+
+    const healthEndMonth = resignYear > y ? 12 : resignMonth;
+
+    const healthMonths = healthEndMonth >= healthStartMonth
+      ? (healthEndMonth - healthStartMonth + 1)
+      : 0;
+
+    return {
+      workMonths: Math.max(0, workMonths),
+      healthMonths: Math.max(0, healthMonths)
+    };
+  }
+
+
+  function retirementInsuranceRatesByYear(year){
+    /*
+      V.1.7.6 퇴사자 정산 연도별 건강보험/장기요양 요율
+      - 2025년: 건강보험 7.09% / 근로자 3.545%, 장기요양 소득 대비 0.9182%
+      - 2026년: 건강보험 7.19% / 근로자 3.595%, 장기요양 소득 대비 0.9448%
+      - 장기요양보험료 = 건강보험료 × (장기요양보험료율 / 건강보험료율)
+      - 건강보험료율은 전체 보험료율, healthEmployee는 근로자 부담률
+    */
+    const y = Number(year);
+    const base = currentRates();
+
+    const table = {
+      2025: {
+        healthTotalRate: 0.0709,
+        healthEmployee: 0.03545,
+        longTermCareIncomeRate: 0.009182
+      },
+      2026: {
+        healthTotalRate: 0.0719,
+        healthEmployee: 0.03595,
+        longTermCareIncomeRate: 0.009448
+      }
+    };
+
+    const row = table[y] || {
+      healthTotalRate: n(base.healthEmployee) * 2,
+      healthEmployee: n(base.healthEmployee),
+      longTermCareIncomeRate: (n(base.healthEmployee) * 2) * n(base.longTermCareRate)
+    };
+
+    const longTermCareRate = row.healthTotalRate
+      ? row.longTermCareIncomeRate / row.healthTotalRate
+      : n(base.longTermCareRate);
+
+    return {
+      ...base,
+      healthTotalRate: row.healthTotalRate,
+      healthEmployee: row.healthEmployee,
+      longTermCareIncomeRate: row.longTermCareIncomeRate,
+      longTermCareRate
+    };
+  }
+
   function calcInsurance(e, year){
     const agg = aggregatePayroll(e, year);
-    const rates = currentRates();
+    const rates = retirementInsuranceRatesByYear(year);
     const taxable = agg.taxable;
-    const finalHealth = truncWon(taxable * n(rates.healthEmployee));
-    const finalLtc = truncWon(finalHealth * n(rates.longTermCareRate));
+
+    /*
+      V.1.7.6 건강보험/고용보험 정산 기준
+
+      [월평균보수]
+      - 실 근무월수 기준
+      - 입사일과 관계없이 입사월 ~ 퇴사월
+
+      [건강보험 산정월수]
+      - 1일 입사자: 입사월 포함
+      - 2일 이후 입사자: 입사월 제외, 익월부터
+      - 퇴사월 포함
+
+      [고용보험]
+      - 기존 급여행수 기준 유지
+    */
+
+    const monthInfo = insuranceMonthsByHireResign(e, year);
+
+    const workMonths = Math.max(0, monthInfo.workMonths);
+    const healthMonths = Math.max(0, monthInfo.healthMonths);
+    const employmentMonths = Math.max(0, n(agg.rowCount));
+
+    const avgMonthlyPay = workMonths
+      ? truncWon(taxable / workMonths)
+      : 0;
+
+    const monthlyHealth = truncWon(avgMonthlyPay * n(rates.healthEmployee));
+    const monthlyLtc = truncWon(monthlyHealth * n(rates.longTermCareRate));
+
+    const finalHealth = truncWon(monthlyHealth * healthMonths);
+    const finalLtc = truncWon(monthlyLtc * healthMonths);
     const finalHealthTotal = finalHealth + finalLtc;
+
     const diffHealth = trunc10(finalHealthTotal - agg.health);
-    const finalEmployment = truncWon(taxable * n(rates.employmentEmployee));
+
+    const monthlyEmployment = truncWon(avgMonthlyPay * n(rates.employmentEmployee));
+    const finalEmployment = truncWon(monthlyEmployment * employmentMonths);
+
     const diffEmployment = trunc10(finalEmployment - agg.employment);
+
     return {
-      type:'건강보험/고용보험 정산', year, rowCount:agg.rowCount,
+      type:'건강보험/고용보험 정산',
+      year,
+      rowCount:agg.rowCount,
+      workMonths,
+      healthMonths,
+      employmentMonths,
       taxable:truncWon(taxable),
+
+      avgMonthlyPay,
+
+      monthlyHealth,
+      monthlyLtc,
+      monthlyEmployment,
+
       prepaidHealth:truncWon(agg.health),
       prepaidEmployment:truncWon(agg.employment),
+
+      healthTotalRate:n(rates.healthTotalRate),
       healthRate:n(rates.healthEmployee),
+      ltcIncomeRate:n(rates.longTermCareIncomeRate),
       ltcRate:n(rates.longTermCareRate),
       employmentRate:n(rates.employmentEmployee),
-      finalHealth, finalLtc, finalHealthTotal, diffHealth,
-      finalEmployment, diffEmployment
+
+      finalHealth,
+      finalLtc,
+      finalHealthTotal,
+      diffHealth,
+
+      finalEmployment,
+      diffEmployment
     };
   }
 
@@ -13774,13 +13928,13 @@ function handleHrSalaryBulkUpload(event){
     const years = settlementYears(e, 'insurance');
     const rows = years.map(y => calcInsurance(e, y));
     return `${baseInfo(e)}
-    <div class="ret-v163-note">1~4월 퇴사자는 전년도와 당해년도 귀속 건강보험/고용보험 정산이 각각 생성됩니다. 총 과세보수에 요율을 직접 적용하여 원단위 보수월액 환산 오차를 줄였습니다.</div>
+    <div class="ret-v163-note">1~4월 퇴사자는 전년도와 당해년도 귀속 건강보험/고용보험 정산이 각각 생성됩니다. 월평균보수는 입사월부터 퇴사월까지의 실 근무월수 기준으로 계산합니다. 건강보험/장기요양 산정월수는 1일 입사자는 입사월 포함, 2일 이후 입사자는 익월부터 퇴사월까지 계산합니다. 건강보험/장기요양 요율은 정산연도별 요율을 적용합니다. 고용보험은 기존 급여지급내역 집계 행수 기준을 유지합니다.</div>
     <div class="hr-scroll">
       <table class="table nowrap-table" style="min-width:1180px">
-        <tr><th>귀속연도</th><th>급여행수</th><th>과세보수</th><th>결정 건강보험</th><th>결정 장기요양</th><th>결정 건강보험 합계</th><th>기납부 건강보험</th><th>건강정산</th><th>결정 고용보험</th><th>기납부 고용보험</th><th>고용정산</th><th>반영상태</th></tr>
+        <tr><th>귀속연도</th><th>과세보수</th><th>월평균보수</th><th>월 건강보험</th><th>월 장기요양</th><th>결정 건강보험 합계</th><th>기납부 건강보험</th><th>건강정산</th><th>월 고용보험</th><th>결정 고용보험</th><th>기납부 고용보험</th><th>고용정산</th><th>반영상태</th></tr>
         ${rows.map(r => {
           const key = resultKey(e,'insurance',r.year);
-          return `<tr><td>${r.year}</td><td>${r.rowCount}</td><td>${mny(r.taxable)}</td><td>${mny(r.finalHealth)}</td><td>${mny(r.finalLtc)}</td><td>${mny(r.finalHealthTotal)}</td><td>${mny(r.prepaidHealth)}</td><td><strong>${mny(r.diffHealth)}</strong></td><td>${mny(r.finalEmployment)}</td><td>${mny(r.prepaidEmployment)}</td><td><strong>${mny(r.diffEmployment)}</strong></td><td>${esc(resultStatus(key))}</td></tr>`;
+          return `<tr><td>${r.year}</td><td>${mny(r.taxable)}</td><td>${mny(r.avgMonthlyPay)}</td><td>${mny(r.monthlyHealth)}</td><td>${mny(r.monthlyLtc)}</td><td>${mny(r.finalHealthTotal)}</td><td>${mny(r.prepaidHealth)}</td><td><strong>${mny(r.diffHealth)}</strong></td><td>${mny(r.monthlyEmployment)}</td><td>${mny(r.finalEmployment)}</td><td>${mny(r.prepaidEmployment)}</td><td><strong>${mny(r.diffEmployment)}</strong></td><td>${esc(resultStatus(key))}</td></tr>`;
         }).join('')}
       </table>
     </div>
@@ -13894,7 +14048,7 @@ function handleHrSalaryBulkUpload(event){
     return `<div class="ret-v163-layout">
       ${leftPane('insurance','퇴사자 목록')}
       <div class="ret-v163-right">
-        <div class="ret-v163-head"><strong>건강보험/고용보험 정산</strong><span>과세보수 합계 기준</span></div>
+        <div class="ret-v163-head"><strong>건강보험/고용보험 정산</strong><span>실 근무월수 + 건강보험 산정월수 분리 적용</span></div>
         <div id="retInsDetailV163" class="ret-v163-body"><div class="work-box">좌측 퇴사자를 선택하면 정산 상세가 표시됩니다.</div></div>
       </div>
     </div>`;
@@ -13965,7 +14119,7 @@ function handleHrSalaryBulkUpload(event){
         ]}
       ]},
       {id:'FEE_G', title:'사업자/프리랜서 수당', children:[{id:'BIZ_FEE', title:'사업자 수당', page:true},{id:'FREE_FEE', title:'프리랜서 수당', page:true}]},
-      {id:'SME_TAX_G', title:'중소기업감면 신청', children:[{id:'SME_TAX_STATUS', title:'신청 현황', page:true}]}
+      {id:'SME_TAX_G', title:'중소기업감면 신청', children:[{id:'SME_TAX_STATUS', title:'신청 현황', page:true}, {id:'SME_TAX_HISTORY', title:'감면내역 조회', page:true}]}
     ]},
     {id:'SUPPORT', title:'정부지원금', icon:'□', children:[{id:'YOUTH_JOB', title:'청년일자리도약장려금', page:true},{id:'SUPPORT_PARENTAL', title:'육아휴직', page:true},{id:'SUPPORT_SHORT', title:'육아기/임신기 단축근로', page:true},{id:'SUPPORT_SPOUSE', title:'배우자출산휴가', page:true}]},
     {id:'DATA', title:'데이터 관리', icon:'↕', children:[{id:'BULK_UPLOAD', title:'데이터 일괄업로드', page:true},{id:'BACKUP', title:'데이터 백업/복원', page:true},{id:'LOG', title:'Log 기록', page:true}]},
@@ -14022,7 +14176,7 @@ function handleHrSalaryBulkUpload(event){
     if(content) {
       try { content.innerHTML = window.pageBody(window.currentPage, found.node.title); }
       catch(err) {
-        console.error('[V.1.6.7] page render error:', window.currentPage, err);
+        console.error('[V.1.7.6] page render error:', window.currentPage, err);
         content.innerHTML = `<div class="card"><div class="work-box">화면 렌더링 중 오류가 발생했습니다.<br>${esc(err.message || err)}</div></div>`;
       }
     }
@@ -14074,7 +14228,7 @@ function handleHrSalaryBulkUpload(event){
   }
 </style>
 <script id="payroll-health-sync-v164-patch">
-/* ===== V.1.6.7 퇴사월 건강보험 급여지급내역 반영 보정 =====
+/* ===== V.1.7.6 퇴사월 건강보험 급여지급내역 반영 보정 =====
    원인:
    - 일부 급여정산 저장 로직은 건강보험 값을 legacy 필드인 insurance/payInsurance에 저장함.
    - 급여지급내역 조회 및 퇴사자 건강보험 정산은 health 필드를 기준으로 집계함.
@@ -14088,7 +14242,7 @@ function handleHrSalaryBulkUpload(event){
 (function(){
   'use strict';
 
-  const PATCH_VERSION = 'V.1.6.7';
+  const PATCH_VERSION = 'V.1.7.6';
   const $ = id => document.getElementById(id);
   const num = v => Number(String(v ?? '').replace(/[^0-9.-]/g,'')) || 0;
   const getYm = r => {
@@ -14288,7 +14442,7 @@ function handleHrSalaryBulkUpload(event){
   .payroll-v165-note{border:1px solid #cfe4ff;background:#eef6ff;color:#1b65b9;border-radius:10px;padding:8px 10px;margin:8px 0;line-height:1.5;font-size:11px!important}
 </style>
 <script id="payroll-detail-deduction-sync-v165-patch">
-/* ===== V.1.6.7 급여지급내역 상세 공제항목 표시 보정 =====
+/* ===== V.1.7.6 급여지급내역 상세 공제항목 표시 보정 =====
    보정 내용:
    1. 건강보험/국민연금/고용보험 필드 alias 통합
       - 국민연금: pension, nationalPension, deducts['국민연금']
@@ -14299,7 +14453,7 @@ function handleHrSalaryBulkUpload(event){
 */
 (function(){
   'use strict';
-  const PATCH_VERSION='V.1.6.7';
+  const PATCH_VERSION='V.1.7.6';
   const EMP_KEY='hypo_hr_erp_employees_v001';
   const $=id=>document.getElementById(id);
   const h=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
@@ -14411,7 +14565,7 @@ function handleHrSalaryBulkUpload(event){
     const body=$('payDetailBodyV040')||$('payDetailBody');
     const modal=$('payDetailModalV040')||$('payDetailModal');
     if(title) title.textContent=`${emp.name} ${y.year}년 ${y.month}월 지급 상세`;
-    if(body) body.innerHTML=`<div class="payroll-v165-note">V.1.6.7 기준으로 국민연금·건강보험·고용보험 alias 필드를 통합해 표시합니다.</div><div class="pay-summary-row"><div class="kpi"><div class="label">총 지급액</div><div class="num">${won(r.gross)}</div></div><div class="kpi"><div class="label">총 공제액</div><div class="num">${won(r.deduct)}</div></div><div class="kpi"><div class="label">실 지급액</div><div class="num">${won(r.net)}</div></div></div><div class="chart-grid"><div class="card"><h3>지급 항목</h3><table class="table nowrap-table"><tr><th>항목</th><th>금액</th></tr>${detailRows(payRows)}</table></div><div class="card"><h3>공제 항목</h3><table class="table nowrap-table"><tr><th>항목</th><th>금액</th></tr>${detailRows(dedRows)}</table></div></div>`;
+    if(body) body.innerHTML=`<div class="payroll-v165-note">V.1.7.6 기준으로 국민연금·건강보험·고용보험 alias 필드를 통합해 표시합니다.</div><div class="pay-summary-row"><div class="kpi"><div class="label">총 지급액</div><div class="num">${won(r.gross)}</div></div><div class="kpi"><div class="label">총 공제액</div><div class="num">${won(r.deduct)}</div></div><div class="kpi"><div class="label">실 지급액</div><div class="num">${won(r.net)}</div></div></div><div class="chart-grid"><div class="card"><h3>지급 항목</h3><table class="table nowrap-table"><tr><th>항목</th><th>금액</th></tr>${detailRows(payRows)}</table></div><div class="card"><h3>공제 항목</h3><table class="table nowrap-table"><tr><th>항목</th><th>금액</th></tr>${detailRows(dedRows)}</table></div></div>`;
     if(modal) modal.style.display='flex';
   }
   function selectPayStatus(no,kind='regular'){
@@ -14481,7 +14635,7 @@ function handleHrSalaryBulkUpload(event){
 </style>
 
 <script id="erp-stabilize-v166">
-/* ===== V.1.6.7 전체 구조 안정화 패치 =====
+/* ===== V.1.7.6 전체 구조 안정화 패치 =====
    목적:
    1. 중복 패치로 인해 같은 기능이 서로 다른 필드명을 참조하는 문제 정리
    2. 급여정산, 급여지급내역, 퇴사자 정산이 동일한 payrollHistory 표준 필드를 참조하도록 정규화
@@ -14492,7 +14646,7 @@ function handleHrSalaryBulkUpload(event){
 (function(){
   'use strict';
 
-  const PATCH_VERSION = 'V.1.6.7';
+  const PATCH_VERSION = 'V.1.7.6';
   const AUDIT = {
     version: PATCH_VERSION,
     createdAt: new Date().toISOString(),
@@ -14691,7 +14845,7 @@ function handleHrSalaryBulkUpload(event){
       if(typeof saveEmployees === 'function' && saveEmployees !== W.saveEmployees) return saveEmployees.apply(this, arguments);
       localStorage.setItem('hypo_hr_erp_employees_v001', JSON.stringify(employeeList()));
     } catch(e) {
-      console.warn('[V.1.6.7] saveEmployees 보정 저장 실패', e);
+      console.warn('[V.1.7.6] saveEmployees 보정 저장 실패', e);
       try { localStorage.setItem('hypo_hr_erp_employees_v001', JSON.stringify(employeeList())); } catch(_) {}
     }
   }
@@ -14745,7 +14899,7 @@ function handleHrSalaryBulkUpload(event){
 
     const rows = buildPayrollHistoryV166(emp);
     area.innerHTML = `<div class="status-header">${esc(emp.name)} 지급 현황 <span class="muted">${esc(emp.type)} / ${esc(emp.status || '')}</span></div>
-      <div class="erp-v166-note">V.1.6.7 기준: 급여지급내역은 pension/nationalPension, health/healthInsurance/insurance 필드를 통합 정규화하여 조회합니다.</div>
+      <div class="erp-v166-note">V.1.7.6 기준: 급여지급내역은 pension/nationalPension, health/healthInsurance/insurance 필드를 통합 정규화하여 조회합니다.</div>
       <table class="table nowrap-table">
         <tr><th>귀속년</th><th>귀속월</th><th>총 지급액</th><th>총 공제액</th><th>실 지급액</th></tr>
         ${rows.map((r,i) => {
@@ -14802,9 +14956,9 @@ function handleHrSalaryBulkUpload(event){
         normalizeAllPayrollV166();
         if(typeof W.__saveEmployeesBeforeV166 === 'function') W.__saveEmployeesBeforeV166();
         else localStorage.setItem('hypo_hr_erp_employees_v001', JSON.stringify(employeeList()));
-        console.info('[V.1.6.7] payroll normalized after', label);
+        console.info('[V.1.7.6] payroll normalized after', label);
       } catch(e) {
-        console.warn('[V.1.6.7] normalizeAfterAction 실패:', label, e);
+        console.warn('[V.1.7.6] normalizeAfterAction 실패:', label, e);
       }
     }, 80);
   }
@@ -14851,7 +15005,7 @@ function handleHrSalaryBulkUpload(event){
     try {
       if(typeof prevPageBody === 'function') return prevPageBody.apply(this, arguments);
     } catch(e) {
-      console.error('[V.1.6.7] pageBody 오류 보호:', id, e);
+      console.error('[V.1.7.6] pageBody 오류 보호:', id, e);
       return `<div class="card"><h3>${esc(title || id)}</h3><div class="work-box">화면 렌더링 중 오류가 발생했습니다.<br>${esc(e.message || e)}</div></div>`;
     }
     return `<div class="card"><h3>${esc(title || id)}</h3><div class="work-box">해당 메뉴는 아직 연결되지 않았습니다.</div></div>`;
@@ -14890,13 +15044,13 @@ function handleHrSalaryBulkUpload(event){
 
 
 <script id="erp-payroll-stabilize-v167">
-/* ===== V.1.6.7 급여지급내역 화면 복구 및 급여정산 재계산 루프 차단 =====
+/* ===== V.1.7.6 급여지급내역 화면 복구 및 급여정산 재계산 루프 차단 =====
    V.1.6.6 결과:
    - 퇴사자 정산 기납부 보험료는 정상화됨
    - 다만 급여지급내역 화면이 기존 라우팅/DOM 구조와 충돌하여 목록이 표시되지 않음
    - 급여정산에서 세액/보험료 자동계산 함수가 여러 번 중첩되어 소득세·지방소득세·고용보험 값이 반복 변경됨
 
-   V.1.6.7 보정:
+   V.1.7.6 보정:
    1. payEmployeeStatusPage / PAY_EMPLOYEE_STATUS 화면을 독립 안정 렌더러로 고정
    2. payContractorStatusPage도 최소 조회 가능 상태로 복구
    3. 급여정산 입력값은 사용자가 입력/업로드한 값 우선 보존
@@ -14906,7 +15060,7 @@ function handleHrSalaryBulkUpload(event){
 (function(){
   'use strict';
 
-  const PATCH_VERSION = 'V.1.6.7';
+  const PATCH_VERSION = 'V.1.7.6';
   const W = window;
 
   function $(id){ return document.getElementById(id); }
@@ -15131,7 +15285,7 @@ function handleHrSalaryBulkUpload(event){
           </tr>`;
         }).join('') || `<tr><td colspan="5" style="text-align:center;color:var(--muted)">조회 가능한 급여지급내역이 없습니다.</td></tr>`}
       </table>
-      <div class="footer-note">V.1.6.7: 급여지급내역 화면은 독립 렌더러로 복구했습니다.</div>`;
+      <div class="footer-note">V.1.7.6: 급여지급내역 화면은 독립 렌더러로 복구했습니다.</div>`;
   }
 
   function openPayDetailModal(no, idx){
@@ -15221,7 +15375,7 @@ function handleHrSalaryBulkUpload(event){
     try {
       if(typeof prevPageBody === 'function') return prevPageBody.apply(this, arguments);
     } catch(e) {
-      console.error('[V.1.6.7] pageBody 보호:', id, e);
+      console.error('[V.1.7.6] pageBody 보호:', id, e);
       return `<div class="card"><h3>${esc(title || id)}</h3><div class="work-box">화면 렌더링 중 오류가 발생했습니다.<br>${esc(e.message || e)}</div></div>`;
     }
     return `<div class="card"><h3>${esc(title || id)}</h3><div class="work-box">해당 메뉴는 아직 연결되지 않았습니다.</div></div>`;
@@ -15272,231 +15426,3 @@ function handleHrSalaryBulkUpload(event){
 })();
 </script>
 
-<script id="erp-payroll-stabilize-v168-final">
-/* ===== V.1.6.9 final payroll guard ===== */
-(function(){
-  'use strict';
-  const W = window;
-  const PATCH_VERSION = 'V.1.6.9';
-  const EMP_KEY = 'hypo_hr_erp_employees_v001';
-  const $ = id => document.getElementById(id);
-  const num = v => {
-    const n = Number(String(v ?? '').replace(/[^0-9.-]/g, ''));
-    return Number.isFinite(n) ? n : 0;
-  };
-  const money = v => {
-    try { if(typeof W.money === 'function') return W.money(num(v)); } catch(_) {}
-    return Math.round(num(v)).toLocaleString('ko-KR');
-  };
-  const employees = () => Array.isArray(W.sampleEmployees) ? W.sampleEmployees : [];
-  const ymNow = () => $('regularPayYmV094')?.value || $('payrollYm')?.value || new Date().toISOString().slice(0,7);
-  const selectedNo = () => W.__payrollSelectedV168 || W.__payrollSelectedV161 || W.__payrollSelectedV140 || W.__payrollSelectedV138 || W.__payrollSelectedV137 || W.__payrollSelectedV128 || W.__payrollSelectedV116 || W.__payrollSelectedV107 || W.__payrollSelectedV106 || W.selectedPayrollNo || document.querySelector('#payrollListV094 tr.selected')?.dataset?.no || '';
-  const PAY_GROUPS = [['base'],['meal'],['basicBonus','execBaseBonus'],['perfBonus','execPerfBonus'],['longBonus','execLongTerm'],['car'],['drive'],['service','servicePay'],['rankPay','dutyPay'],['annualLeave','annual'],['etc'],['fixedOver'],['overtime'],['retro'],['incentive'],['bonus'],['traffic']];
-  const DED_GROUPS = [['incomeTax'],['localTax'],['nationalPension','pension','payPension'],['healthInsurance','health','insurance','payInsurance','payHealth'],['employmentInsurance','employment','payEmployment'],['adjIncomeTax'],['adjLocalTax'],['healthAdjustment','adjHealth'],['employmentAdjustment','adjEmployment'],['yearIncomeTax'],['yearLocalTax'],['yearHealth'],['healthInterest'],['yearEmployment'],['studentLoan'],['etcDeduct']];
-  const PROTECTED = [...new Set(DED_GROUPS.flat())];
-  const SIMPLE_IDS = {base:'payBase', meal:'payMeal', car:'payCar', fixedOver:'payFixed', overtime:'payOvertime', incentive:'payIncentive', etc:'payEtc', annualLeave:'payAnnual', incomeTax:'payIncomeTax', localTax:'payLocalTax', insurance:'payInsurance', healthInsurance:'payInsurance', health:'payInsurance', etcDeduct:'payEtcDeduct'};
-
-  function first(obj, keys){
-    for(const key of keys){
-      if(Object.prototype.hasOwnProperty.call(obj || {}, key) && obj[key] !== '' && obj[key] != null) return num(obj[key]);
-    }
-    return 0;
-  }
-  function syncAliases(r){
-    if(!r) return r;
-    const pension = first(r, ['nationalPension','pension','payPension']);
-    const health = first(r, ['healthInsurance','health','insurance','payInsurance','payHealth']);
-    const employment = first(r, ['employmentInsurance','employment','payEmployment']);
-    r.nationalPension = r.pension = pension;
-    r.healthInsurance = r.health = r.insurance = health;
-    r.employmentInsurance = r.employment = employment;
-    r.healthAdjustment = r.adjHealth = first(r, ['healthAdjustment','adjHealth']);
-    r.employmentAdjustment = r.adjEmployment = first(r, ['employmentAdjustment','adjEmployment']);
-    r.annualLeave = r.annual = first(r, ['annualLeave','annual']);
-    return r;
-  }
-  function recalc(r){
-    if(!r) return r;
-    syncAliases(r);
-    const gross = PAY_GROUPS.reduce((s, keys) => s + first(r, keys), 0);
-    const deduct = DED_GROUPS.reduce((s, keys) => s + first(r, keys), 0);
-    r.gross = gross;
-    r.deduct = deduct;
-    r.net = gross - deduct;
-    r._stableV168 = true;
-    return r;
-  }
-  function currentRecord(no=selectedNo(), ym=ymNow()){
-    const emp = employees().find(e => String(e.no) === String(no));
-    const rec = (emp?.payrollHistory || []).find(r => String(r.ym || '') === String(ym));
-    return {emp, rec};
-  }
-  function readDom(){
-    const root = $('payrollRightV094') || $('payrollFormArea');
-    if(!root) return null;
-    const out = {};
-    root.querySelectorAll('input[data-pay-key]').forEach(input => {
-      const key = input.dataset.payKey;
-      if(key) out[key] = num(input.value);
-    });
-    Object.entries(SIMPLE_IDS).forEach(([key,id]) => {
-      const el = $(id);
-      if(el) out[key] = num(el.value);
-    });
-    return Object.keys(out).length ? out : null;
-  }
-  function updateTotalsFromDom(){
-    const root = $('payrollRightV094') || $('payrollFormArea');
-    if(!root) return;
-    const values = readDom() || {};
-    const gross = PAY_GROUPS.reduce((s, keys) => s + first(values, keys), 0);
-    const deduct = DED_GROUPS.reduce((s, keys) => s + first(values, keys), 0);
-    const taxable = PAY_GROUPS.filter(keys => !keys.includes('meal') && !keys.includes('drive')).reduce((s, keys) => s + first(values, keys), 0);
-    const nums = [...root.querySelectorAll('.payroll-v094-summary .num')];
-    if(nums[0]) nums[0].textContent = money(gross);
-    if(nums[1]) nums[1].textContent = money(deduct);
-    if(nums[2]) nums[2].textContent = money(gross - deduct);
-    if(nums[3]) nums[3].textContent = money(taxable);
-    const panels = [...root.querySelectorAll('.payroll-v094-panel')];
-    const payTotals = panels[0] ? [...panels[0].querySelectorAll('.payroll-v094-total-row td:last-child')] : [];
-    const dedTotals = panels[1] ? [...panels[1].querySelectorAll('.payroll-v094-total-row td:last-child')] : [];
-    if(payTotals[0]) payTotals[0].textContent = money(taxable);
-    if(payTotals[1]) payTotals[1].textContent = money(gross);
-    if(dedTotals[0]) dedTotals[0].textContent = money(deduct);
-    if(dedTotals[1]) dedTotals[1].textContent = money(gross - deduct);
-    if($('payGrossView')) $('payGrossView').textContent = money(gross);
-    if($('payDeductView')) $('payDeductView').textContent = money(deduct);
-    if($('payNetView')) $('payNetView').textContent = money(gross - deduct);
-  }
-  function writeDom(r){
-    if(!r) return;
-    syncAliases(r);
-    Object.keys(r).forEach(key => {
-      const el = $('payrollV094_' + key);
-      if(el) el.value = money(r[key]);
-    });
-    const set = (id, value) => { const el = $(id); if(el) el.value = money(value); };
-    set('payIncomeTax', r.incomeTax);
-    set('payLocalTax', r.localTax);
-    set('payInsurance', first(r, ['insurance','healthInsurance','health']));
-    set('payEtcDeduct', r.etcDeduct);
-    updateTotalsFromDom();
-  }
-  function snapshot(ym=ymNow()){
-    const map = new Map();
-    employees().forEach(emp => (emp.payrollHistory || []).forEach(rec => {
-      if(String(rec.ym || '') !== String(ym)) return;
-      const vals = {};
-      PROTECTED.forEach(key => {
-        if(Object.prototype.hasOwnProperty.call(rec, key) && rec[key] !== '' && rec[key] != null) vals[key] = num(rec[key]);
-      });
-      map.set(`${emp.no}|${ym}`, vals);
-    }));
-    return map;
-  }
-  function restore(map, ym=ymNow(), skipNo=''){
-    if(!(map instanceof Map)) return;
-    employees().forEach(emp => {
-      if(skipNo && String(emp.no) === String(skipNo)) return;
-      const rec = (emp.payrollHistory || []).find(r => String(r.ym || '') === String(ym));
-      const vals = map.get(`${emp.no}|${ym}`);
-      if(!rec || !vals) return;
-      Object.assign(rec, vals);
-      recalc(rec);
-    });
-  }
-  function persist(){
-    try {
-      if(typeof W.saveEmployees === 'function') W.saveEmployees();
-      else localStorage.setItem(EMP_KEY, JSON.stringify(employees()));
-    } catch(e) {
-      try { localStorage.setItem(EMP_KEY, JSON.stringify(employees())); } catch(_) {}
-    }
-  }
-  function applyDom(no=selectedNo(), ym=ymNow()){
-    const dom = readDom();
-    if(!dom) return false;
-    const {rec} = currentRecord(no, ym);
-    if(!rec) return false;
-    Object.assign(rec, dom);
-    recalc(rec);
-    writeDom(rec);
-    return true;
-  }
-  function delayed(map, ym, no, dom){
-    [0, 80, 180, 380, 720].forEach(ms => setTimeout(() => {
-      restore(map, ym, no);
-      const {rec} = currentRecord(no, ym);
-      if(rec && dom) Object.assign(rec, dom);
-      if(rec) writeDom(recalc(rec));
-      persist();
-    }, ms));
-  }
-  function recalcDisplayOnly(){
-    applyDom(selectedNo(), ymNow());
-    updateTotalsFromDom();
-    return false;
-  }
-  function wrapEntrypoints(){
-    const recalcFn = function(){ return recalcDisplayOnly(); };
-    recalcFn.__v168DisplayOnly = true;
-    W.payrollV094RecalcCurrent = recalcFn;
-    W.calcPayrollInput = recalcFn;
-    W.calcPayrollInputV094 = recalcFn;
-    W.recalcPayrollInputsV094 = recalcFn;
-
-    const wrap = (name, mode) => {
-      const prev = W[name];
-      if(typeof prev !== 'function' || prev.__v168StableGuard) return;
-      const fn = function(){
-        if(name === 'payrollV094SelectEmp' || name === 'selectPayrollEmployee') W.__payrollSelectedV168 = arguments[0];
-        const ym = ymNow();
-        const no = (name === 'payrollV094SelectEmp' || name === 'selectPayrollEmployee') ? arguments[0] : selectedNo();
-        const before = snapshot(ym);
-        const dom = mode === 'save-current' ? readDom() : null;
-        const ret = prev.apply(this, arguments);
-        delayed(before, ym, no, mode === 'save-current' ? dom : readDom());
-        return ret;
-      };
-      fn.__v168StableGuard = true;
-      W[name] = fn;
-    };
-    wrap('payrollV094SelectEmp', 'select');
-    wrap('selectPayrollEmployee', 'select');
-    wrap('payrollV094RenderList', 'render');
-    wrap('payrollV094SaveCurrent', 'save-current');
-    wrap('payrollV094SaveAll', 'save-all');
-    wrap('savePayrollCurrent', 'save-current');
-  }
-  function applyVersion(){
-    try {
-      W.VERSION = PATCH_VERSION;
-      document.title = 'Hypokeimenon HR ERP ' + PATCH_VERSION;
-      document.querySelectorAll('.brand-text span,.version-pill').forEach(el => { if(el) el.textContent = PATCH_VERSION; });
-      const sub = document.querySelector('.login-card .sub');
-      if(sub) sub.textContent = PATCH_VERSION + ' - payroll stability';
-    } catch(_) {}
-  }
-
-  W.__HR_ERP_V168_AUDIT__ = {
-    version: PATCH_VERSION,
-    changed: [
-      'final payrollV094RecalcCurrent display-only guard',
-      'deduction preservation after select/render/save',
-      'payroll alias and total normalization'
-    ]
-  };
-  W.payrollV168RecalcTotals = recalc;
-  W.payrollV168ApplyDomToRecord = applyDom;
-  applyVersion();
-  wrapEntrypoints();
-  document.addEventListener('DOMContentLoaded', function(){
-    applyVersion();
-    wrapEntrypoints();
-  });
-  setTimeout(function(){
-    applyVersion();
-    wrapEntrypoints();
-  }, 0);
-})();
-</script>
